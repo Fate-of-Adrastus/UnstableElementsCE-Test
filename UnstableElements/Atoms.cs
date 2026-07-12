@@ -9,11 +9,6 @@ using Quintessential;
 
 namespace UnstableElements;
 
-using QuintessenceAtomColours = class_229;
-
-using AtomTypes = class_175;
-using Texture = class_256;
-
 internal static class Atoms{
 	
 	public static AtomType Aether, Uranium;
@@ -21,28 +16,28 @@ internal static class Atoms{
 	private static readonly List<AtomType> UraniumIsotopes = new(), SlowShakingIso = new(), FastShakingIso = new();
 
 	private static readonly AtomTypeEq AtomComparator = new();
-	private static readonly Random UraniumShakeCounter = new();
+	private static readonly Random UraniumShakeCounter = new(85934);
 	private static ILHook SimValidationHook;
 	private static Hook AetherBlockerHook;
 
 	public static void AddAtomTypes(){
 		// Aether atom type
 		Aether = new(){
-			field_2283 = 64, /*ID*/
-			field_2284 = class_134.method_254("Aether"), /*Non-local Name*/
-			field_2285 = class_134.method_253("Elemental Aether", string.Empty), /*Atomic Name*/
-			field_2286 = class_134.method_253("Aether", string.Empty), /*Local name*/
-			field_2287 = class_235.method_615("textures/atoms/leppa/UnstableElements/aether_symbol"), /*Symbol*/
-			field_2288 = class_235.method_615("textures/atoms/leppa/UnstableElements/aether_shadow") /*Shadow*/
+            byteId = 64,
+            defaultName = Translations.WithAllLanguages("Aether"),
+            elementalName = Translations.Translate("Elemental Aether"),
+            name = Translations.Translate("Aether"),
+            symbol = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_symbol"),
+            shadow = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_shadow")
 		};
-		QuintessenceAtomColours aetherColours = new(){
-			field_1950 = class_238.field_1989.field_81.field_613.field_627, /*Base*/
-			field_1951 = class_235.method_615("textures/atoms/leppa/UnstableElements/aether_colors"), /*Colours*/
-			field_1952 = class_238.field_1989.field_81.field_613.field_629, /*Mask*/
-			field_1953 = class_238.field_1989.field_81.field_613.field_630 /*Rimlight*/
+        PrismaticAtomTextures aetherColours = new(){
+            base1 = Assets.textures.field_81.field_613.field_627,
+            colors = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_colors"),
+            mask = Assets.textures.field_81.field_613.field_629,
+            rimlight = Assets.textures.field_81.field_613.field_630
 		};
-		Aether.field_2292 = aetherColours;
-		Aether.field_2296 /*Non-metal?*/ = true;
+		Aether.prismaticTextures = aetherColours;
+		Aether.isPrismatic = true;
 		Aether.QuintAtomType = "UnstableElements:aether";
 
 		QApi.AddAtomType(Aether);
@@ -51,18 +46,18 @@ internal static class Atoms{
 		for(int phase = 0; phase < 3; phase++)
 			for(int turn = 0; turn < 3; turn++){
 				AtomType isotope = new(){
-					field_2283 = 65,
-					field_2284 = class_134.method_254("Uranium"),
-					field_2285 = class_134.method_253("Elemental Uranium", string.Empty),
-					field_2286 = class_134.method_253("Uranium", string.Empty),
-					field_2287 = class_235.method_615($"textures/atoms/leppa/UnstableElements/uranium_symbol_{phase}"),
-					field_2288 = class_238.field_1989.field_81.field_599,
-					field_2291 = new(){
-						field_13 = class_238.field_1989.field_81.field_577, /*Diffuse*/
-						field_14 = class_235.method_615($"textures/atoms/leppa/UnstableElements/uranium_lightramp_{phase}"), /*Lightramp*/
-						field_15 = class_238.field_1989.field_81.field_601 /*Rimlight*/
-					}, /*Colours*/
-					field_2294 = true /*Metal*/
+                    byteId = 65,
+                    defaultName = Translations.WithAllLanguages("Uranium"),
+                    elementalName = Translations.Translate("Elemental Uranium"),
+                    name = Translations.Translate("Uranium"),
+                    symbol = AssetLoaderHelper.LoadTexture($"textures/atoms/leppa/UnstableElements/uranium_symbol_{phase}"),
+                    shadow = Assets.textures.field_81.field_599,
+                    metallicTextures = new(){
+                        diffuse = Assets.textures.field_81.field_577,
+                        lightramp = AssetLoaderHelper.LoadTexture($"textures/atoms/leppa/UnstableElements/uranium_lightramp_{phase}"),
+						rimlight = Assets.textures.field_81.field_601
+					},
+                    isMetallic = true
 				};
 				if(phase == 0 && turn == 0){
 					isotope.QuintAtomType = "UnstableElements:uranium";
@@ -82,11 +77,11 @@ internal static class Atoms{
 		QApi.RunAfterCycle((sim, first) => {
 			if(!first){
 				List<Molecule> toRemove = new();
-				var molecules = sim.field_3823;
+				var molecules = sim.molecules;
 				foreach(var molecule in molecules){
 					bool hasAether = false, hasNonAether = false;
-					foreach(KeyValuePair<HexIndex, Atom> atom in molecule.method_1100())
-						if(atom.Value.field_2275.Equals(Aether)){
+					foreach(KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
+						if(atom.Value.atomType.Equals(Aether)){
 							if(!IsHexStabilized(atom.Key))
 								hasAether = true;
 						}else
@@ -97,9 +92,9 @@ internal static class Atoms{
 				}
 
 				foreach(var it in toRemove){
-					foreach(KeyValuePair<HexIndex, Atom> atom in it.method_1100()){
-						var seb = sim.field_3818;
-						seb.field_3936.Add(new class_228(seb, (enum_7)1, class_187.field_1742.method_492(atom.Key) + new Vector2(80f, 0.0f), class_238.field_1989.field_90.field_240 /* or 42? */, 30f, Vector2.Zero, 0.0f));
+					foreach(KeyValuePair<HexIndex, Atom> atom in it.GetAtoms()){
+						var seb = sim.solutionEditor;
+						seb.field_3936.Add(new GlyphEffect(seb, (EffectTimescaleType)1, HexGrid.standardGrid.ToWorldCoords(atom.Key) + new Vector2(80f, 0.0f), Assets.textures.field_90.field_240 /* or 42? */, 30f, Vector2.Zero, 0.0f));
 					}
 
 					molecules.Remove(it);
@@ -111,93 +106,93 @@ internal static class Atoms{
 		QApi.RunAfterCycle((sim, first) => {
 			if(first) return;
 			
-			var seb = sim.field_3818;
-			var molecules = sim.field_3823;
+			var seb = sim.solutionEditor;
+			var molecules = sim.molecules;
 			foreach(var molecule in molecules){
 				// atoms of initial uranium only decay if the molecule containing them is grabbed
-				bool grabbed = sim.field_3821.Values.Any(state => state.field_2729 == molecule);
-				foreach(KeyValuePair<HexIndex, Atom> atom in molecule.method_1100())
+				bool grabbed = sim.simulationDict.Values.Any(state => state.heldMolecule == molecule);
+				foreach(KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
 					if(!IsHexStabilized(atom.Key))
 						for(var idx = 0; idx < UraniumIsotopes.Count; idx++)
-							if(atom.Value.field_2275.QuintAtomType == UraniumIsotopes[idx].QuintAtomType){
+							if(atom.Value.atomType.QuintAtomType == UraniumIsotopes[idx].QuintAtomType){
 								if(idx == UraniumIsotopes.Count - 1)
 									DoUraniumDecay(molecule, atom.Value, atom.Key, seb);
 								else if(idx > 0 || grabbed)
-									atom.Value.field_2275 = UraniumIsotopes[idx + 1];
+									atom.Value.atomType = UraniumIsotopes[idx + 1];
 								break;
 							}
 			}
 		});
 
 		// Uranium visuals (shaking, heating)
-		On.Editor.method_927 += OnAtomRender;
+		On.Editor.RenderAtom += OnAtomRender;
 		// Molecule editor warning for pure-aether atoms
-		//On.MoleculeEditorScreen.method_50 += OnMoleculeEditorRender;
+		//On.MoleculeEditorScreen.RenderFrame += OnMoleculeEditorRender;
 		// Shaking uranium validation
-		SimValidationHook = new(typeof(Sim).GetMethod("method_1844", BindingFlags.NonPublic | BindingFlags.Static), ModSimValidate);
+        SimValidationHook = new(typeof(Sim).GetMethod("IsSameMolecule", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(Molecule), typeof(Molecule) }, null), ModSimValidate);
 		// Blocking unstable pure-aether inputs
-		AetherBlockerHook = new(typeof(Sim).GetMethod("method_1837", BindingFlags.NonPublic | BindingFlags.Instance), CheckInputProduction);
+		AetherBlockerHook = new(typeof(Sim).GetMethod("HasOverlap", BindingFlags.NonPublic | BindingFlags.Instance), CheckInputProduction);
 	}
 
 	public static void Unload(){
-		On.Editor.method_927 -= OnAtomRender;
-		//On.MoleculeEditorScreen.method_50 -= OnMoleculeEditorRender;
+		On.Editor.RenderAtom -= OnAtomRender;
+		//On.MoleculeEditorScreen.RenderFrame -= OnMoleculeEditorRender;
 		SimValidationHook.Dispose();
 		AetherBlockerHook.Dispose();
 	}
 
 	public static void DoUraniumDecay(Molecule m, Atom u, HexIndex pos, SolutionEditorBase seb){
-		AtomType from = u.field_2275;
-		m.method_1106(AtomTypes.field_1681, pos);
-		u.field_2276 = new class_168(seb, 0, (enum_132)1, from, class_238.field_1989.field_81.field_614, 30f);
+		AtomType from = u.atomType;
+		m.ReplaceAtom(AtomTypes.lead, pos);
+		u.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, from, Assets.textures.field_81.field_614, 30f);
 	}
 
 	public static bool IsUraniumState(AtomType type) => UraniumIsotopes.Contains(type, AtomComparator);
 
-	private static void OnAtomRender(On.Editor.orig_method_927 orig, AtomType type, Vector2 position, float param_4582, float param_4583, float param_4584, float param_4585, float param_4586, float param_4587, Texture overrideShadow, Texture maskM, bool param_4590){
+	private static void OnAtomRender(On.Editor.orig_RenderAtom orig, AtomType type, Vector2 position, float param_4582, float param_4583, float param_4584, float param_4585, float param_4586, float param_4587, Texture overrideShadow, Texture maskM, bool param_4590){
 		if(SlowShakingIso.Contains(type, AtomComparator))
-			position += new Vector2((UraniumShakeCounter.Next(9) - 4) / 4f, (UraniumShakeCounter.Next(9) - 4) / 4f);
+			position += new Vector2(UraniumShakeCounter.GetFloat(-4,4) / 4f, UraniumShakeCounter.GetFloat(-4,4) / 4f);
 		if(FastShakingIso.Contains(type, AtomComparator))
-			position += new Vector2((UraniumShakeCounter.Next(9) - 4f) / 2f, (UraniumShakeCounter.Next(9) - 4) / 2f);
+			position += new Vector2(UraniumShakeCounter.GetFloat(-4, 4) / 2f, UraniumShakeCounter.GetFloat(-4,4) / 2f);
 		orig(type, position, param_4582, param_4583, param_4584, param_4585, param_4586, param_4587, overrideShadow, maskM, param_4590);
 	}
 
 	private static void ModSimValidate(ILContext il){
 		ILCursor cursor = new(il);
-		while(cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdfld("Atom", "field_2275"))){
+		while(cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdfld("Atom", "atomType"))){
 			cursor.Remove();
 			cursor.EmitDelegate<Func<Atom, AtomType>>(u => {
-				AtomType type = u.field_2275;
+				AtomType type = u.atomType;
 				return IsUraniumState(type) ? Uranium : type;
 			});
 		}
 	}
 
-	private static void OnMoleculeEditorRender(On.MoleculeEditorScreen.orig_method_50 orig, MoleculeEditorScreen self, float param_4858){
-		orig(self, param_4858);
+	private static void OnMoleculeEditorRender(On.MoleculeEditorScreen.orig_RenderFrame orig, MoleculeEditorScreen self, float deltaTime) {
+		orig(self, deltaTime);
 		DynamicData selfData = new(self);
 		// if there's no existing error...
-		if(!selfData.Get<Maybe<LocString>>("field_2661").method_1085()){
-			Molecule m = selfData.Get<Molecule>("field_2656");
+		if(!selfData.Get<Maybe<LocString>>("errorMessage").HasValue()){
+			Molecule m = selfData.Get<Molecule>("molecule");
 			// and there are only a nonzero amount of Aether atoms...
-			if(m.method_1100().Count > 0 && m.method_1100().Values.Select(u => u.field_2275).All(u => u.Equals(Aether))){
+			if(m.GetAtoms().Count > 0 && m.GetAtoms().Values.Select(u => u.atomType).All(u => u.Equals(Aether))){
 				// display a warning
 				Vector2 sizeM = new Vector2(1516f, 922f);
-				Vector2 centreM = (class_115.field_1433 / 2 - sizeM / 2 + new Vector2(-2f, -11f)).Rounded();
-				class_140.method_317("WARNING: Pure-aether molecules require a Glyph of Tranquility to handle.", centreM + new Vector2(471f, 107f), 922, false, false);
+				Vector2 centreM = (InputManager.screenSize / 2 - sizeM / 2 + new Vector2(-2f, -11f)).Rounded();
+                UIUtils.RenderScreenTitle("WARNING: Pure-aether molecules require a Glyph of Tranquility to handle.", centreM + new Vector2(471f, 107f), 922, false, false);
 			}
 		}
 	}
 
 	private static bool IsHexStabilized(HexIndex h) => Parts.TranquilityHexes.Contains(h) || Parts.OtherStableHexes.Contains(h);
 
-	public delegate bool orig_method_1837(Sim self, Molecule toCheck, HashSet<HexIndex> moleculeFootprint);
+	public delegate bool orig_HasOverlap(Sim self, Molecule toCheck, HashSet<HexIndex> moleculeFootprint);
 
-	public static bool CheckInputProduction(orig_method_1837 orig, Sim self, Molecule toCheck, HashSet<HexIndex> moleculeFootprint){
+	public static bool CheckInputProduction(orig_HasOverlap orig, Sim self, Molecule toCheck, HashSet<HexIndex> moleculeFootprint){
 		bool blocked = orig(self, toCheck, moleculeFootprint);
 		if(!blocked) // if its not blocked by collisions, but is made of Aether and not stabilized, block it
-			if(toCheck.method_1100().Values.Any() && toCheck.method_1100().Values.Select(u => u.field_2275).All(u => u.QuintAtomType?.Equals(Aether.QuintAtomType) ?? false))
-				if(!toCheck.method_1100().Keys.All(IsHexStabilized))
+			if(toCheck.GetAtoms().Values.Any() && toCheck.GetAtoms().Values.Select(u => u.atomType).All(u => u.QuintAtomType?.Equals(Aether.QuintAtomType) ?? false))
+				if(!toCheck.GetAtoms().Keys.All(IsHexStabilized))
 					return true;
 		return blocked;
 	}

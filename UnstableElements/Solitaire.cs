@@ -8,9 +8,6 @@ using Quintessential;
 
 namespace UnstableElements;
 
-using Texture = class_256;
-using AtomTypes = class_175;
-
 public class Solitaire{
 
 	// TODO: just run hookgen with private methods on please
@@ -24,44 +21,44 @@ public class Solitaire{
 
 	// element placement
 	public static List<AtomType> Cardinals = new(){
-		AtomTypes.field_1675, // salt
-		AtomTypes.field_1676, // air
-		AtomTypes.field_1677, // earth
-		AtomTypes.field_1678, // fire
-		AtomTypes.field_1679  // water
+		AtomTypes.salt, // salt
+		AtomTypes.air, // air
+		AtomTypes.earth, // earth
+		AtomTypes.fire, // fire
+		AtomTypes.water  // water
 	};
 	public static List<AtomType> Metals = new(){
-		AtomTypes.field_1685, // silver
-		AtomTypes.field_1682, // copper
-		AtomTypes.field_1684, // iron
-		AtomTypes.field_1683, // tin
-		AtomTypes.field_1681  // lead
+		AtomTypes.silver, // silver
+		AtomTypes.copper, // copper
+		AtomTypes.iron, // iron
+		AtomTypes.tin, // tin
+		AtomTypes.lead  // lead
 	};
-	public static AtomType Quicksilver = AtomTypes.field_1680;
-	public static AtomType Gold = AtomTypes.field_1686;
+	public static AtomType Quicksilver = AtomTypes.quicksilver;
+	public static AtomType Gold = AtomTypes.gold;
 
 	internal static void Load(){
-		On.class_198.method_537 += OnGenerateSolitaireBoard;
+		On.SolitaireFileManager.GetRandomFromFile += OnGenerateSolitaireBoard;
 		
 		hookJournalEntryRender = new Hook(
-			typeof(JournalScreen).GetMethod("method_1040", BindingFlags.Instance | BindingFlags.NonPublic),
+			typeof(JournalScreen).GetMethod("RenderPuzzleSelect", BindingFlags.Instance | BindingFlags.NonPublic),
 			typeof(Solitaire).GetMethod("OnJournalEntryRender", BindingFlags.Static | BindingFlags.NonPublic)
 		);
 		hookSolitaireStateGetter = new Hook(
-			typeof(SolitaireScreen).GetMethod("method_1889", BindingFlags.Instance | BindingFlags.NonPublic),
+			typeof(SolitaireScreen).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic),
 			typeof(Solitaire).GetMethod("OnSolitaireScreenGetState", BindingFlags.Static | BindingFlags.NonPublic)
 		);
 		hookSolitaireStateSetter = new Hook(
-			typeof(SolitaireScreen).GetMethod("method_1890", BindingFlags.Instance | BindingFlags.NonPublic),
+			typeof(SolitaireScreen).GetMethod("SetState", BindingFlags.Instance | BindingFlags.NonPublic),
 			typeof(Solitaire).GetMethod("OnSolitaireScreenSetState", BindingFlags.Static | BindingFlags.NonPublic)
 		);
 
-		sigmarSprite = class_235.method_615("UeJournal/sigmar");
-		sigmarHoverSprite = class_235.method_615("UeJournal/sigmar_hover");
+		sigmarSprite = AssetLoaderHelper.LoadTexture("UeJournal/sigmar");
+		sigmarHoverSprite = AssetLoaderHelper.LoadTexture("UeJournal/sigmar_hover");
 	}
 
 	internal static void Unload(){
-		On.class_198.method_537 -= OnGenerateSolitaireBoard;
+		On.SolitaireFileManager.GetRandomFromFile -= OnGenerateSolitaireBoard;
 		
 		hookJournalEntryRender?.Dispose();
 		hookSolitaireStateGetter?.Dispose();
@@ -70,14 +67,14 @@ public class Solitaire{
 
 	private static SolitaireGameState GenerateSolitaireBoard(){
 		SolitaireGameState state = new(){
-			field_3864 = { // gold in the centre
+			atoms = { // gold in the centre
 				[new HexIndex(5, 0)] = Gold
 			}
 		};
 		
 		// generate via a series of valid moves
 		// go for marbles + metals
-		Random rng = new();
+		Random rng = new(7893);
 		int curMetal = 0;
 		int[] cardinalsPlaced = new int[Cardinals.Count];
 		int aethers = 0;
@@ -99,21 +96,21 @@ public class Solitaire{
 			if(choices.Count == 0)
 				break; // we're done!
 
-			AtomType next = rng.Choose(choices);
+			AtomType next = rng.GetElement(choices);
 			if(next == Atoms.Aether){
 				HexIndex pos = RandomFree(state, null, rng, threshold: 6);
-				state.field_3864[pos] = next;
+				state.atoms[pos] = next;
 				aethers++;
 			}else{
 				HexIndex pos = RandomFree(state, null, rng);
 				HexIndex pos2 = RandomFree(state, pos, rng);
 				if(Cardinals.Contains(next)){
-					state.field_3864[pos] = next;
-					state.field_3864[pos2] = next;
+					state.atoms[pos] = next;
+					state.atoms[pos2] = next;
 					cardinalsPlaced[Cardinals.IndexOf(next)] += 2;
 				}else{
-					state.field_3864[pos] = next;
-					state.field_3864[pos2] = Quicksilver;
+					state.atoms[pos] = next;
+					state.atoms[pos2] = Quicksilver;
 					curMetal++;
 				}
 			}
@@ -124,22 +121,22 @@ public class Solitaire{
 
 	private static HexIndex RandomFree(SolitaireGameState current, HexIndex? exclude, Random rng, int threshold = 3){
 		if(exclude != null){
-			current = current.method_1880();
-			current.field_3864[exclude.Value] = AtomTypes.field_1675;
+			current = current.Clone();
+			current.atoms[exclude.Value] = AtomTypes.salt;
 		}
 
 		return rng.ChooseOrElse(indicies.Where(v => IsValidPlacement(v, current, threshold)).ToList(), new HexIndex(0, 0));
 	}
 	
 	private static bool IsValidPlacement(HexIndex pos, SolitaireGameState self, int threshold){
-		if(self.field_3864.ContainsKey(pos))
+		if(self.atoms.ContainsKey(pos))
 			return false;
 
 		int currentBlanks = 0;
 		int maxBlanks = 0;
 		for(int index = 0; index < 2; ++index){
 			foreach(HexIndex adjacentOffset in HexIndex.AdjacentOffsets)
-				if(self.field_3864.ContainsKey(pos + adjacentOffset))
+				if(self.atoms.ContainsKey(pos + adjacentOffset))
 					currentBlanks = 0;
 				else{
 					++currentBlanks;
@@ -150,28 +147,28 @@ public class Solitaire{
 		return maxBlanks >= threshold;
 	}
 	
-	private static SolitaireGameState OnGenerateSolitaireBoard(On.class_198.orig_method_537 orig, bool quint){
-		return SolitaireExt.IsCurrentSolitaireUe() ? GenerateSolitaireBoard() : orig(quint);
+	private static SolitaireGameState OnGenerateSolitaireBoard(On.SolitaireFileManager.orig_GetRandomFromFile orig, SolitaireType type){
+		return SolitaireExt.IsCurrentSolitaireUe() ? GenerateSolitaireBoard() : orig(type);
 	}
 	
 	private delegate void orig_method_1040(JournalScreen self, Puzzle puzzle, Vector2 pos, bool big);
 	private static void OnJournalEntryRender(orig_method_1040 orig, JournalScreen self, Puzzle puzzle, Vector2 pos, bool big){
-		if(puzzle.field_2766 == "QuickIron"){
-			Texture puzzleBg = big ? class_238.field_1989.field_88.field_894 : class_238.field_1989.field_88.field_895;
-			class_256 tick = true /* TODO: count wins */ ? class_238.field_1989.field_96.field_879 : class_238.field_1989.field_96.field_882;
-			class_256 divider = big ? class_238.field_1989.field_88.field_892 : class_238.field_1989.field_88.field_893;
-			Bounds2 bounds = Bounds2.WithSize(pos, puzzleBg.field_2056.ToVector2());
+		if(puzzle.puzzleId == "QuickIron"){
+			Texture puzzleBg = big ? Assets.textures.field_88.field_894 : Assets.textures.field_88.field_895;
+			Texture tick = true /* TODO: count wins */ ? Assets.textures.field_96.field_879 : Assets.textures.field_96.field_882;
+			Texture divider = big ? Assets.textures.field_88.field_892 : Assets.textures.field_88.field_893;
+			Bounds2 bounds = Bounds2.WithSize(pos, puzzleBg.size.ToVector2());
 			bool hover = bounds.Contains(Input.MousePos());
-			class_135.method_290("Shattered Garden", pos + new Vector2(9, -19), class_238.field_1990.field_2144, class_181.field_1718, 0, 1f, 0.6f, float.MaxValue, float.MaxValue, 0, new Color(), null, int.MaxValue, false, true);
-			UI.DrawTexture(tick, pos + new Vector2(puzzleBg.field_2056.X - 27, -23f));
+			TextureRenderer.RenderText("Shattered Garden", pos + new Vector2(9, -19), Assets.fonts.crimson_15, class_181.field_1718, 0, 1f, 0.6f, float.MaxValue, float.MaxValue, 0, new Color(), null, int.MaxValue, false, true);
+			UI.DrawTexture(tick, pos + new Vector2(puzzleBg.size.X - 27, -23f));
 			UI.DrawTexture(puzzleBg, pos);
 			UI.DrawTexture(divider, pos + new Vector2(7f, -34f));
 			UI.DrawTexture(hover ? sigmarHoverSprite : sigmarSprite, bounds.Min + new Vector2(13f, 13f));
 			if(hover && Input.IsLeftClickPressed()){
-				var solitaireScreen = new SolitaireScreen(true);
+				var solitaireScreen = new SolitaireScreen((SolitaireType)1);
 				solitaireScreen.SetUe(true);
 				UI.OpenScreen(solitaireScreen);
-				class_238.field_1991.field_1821.method_28(1f);
+				Assets.sounds.field_1821.method_28(1f);
 			}
 		}else
 			orig(self, puzzle, pos, big);
@@ -192,18 +189,16 @@ internal static class SolitaireExt{
 	private const string ueTag = "UnstableElements";
 	
 	internal static bool IsUe(this SolitaireScreen screen)
-		=> DynamicData.For(screen).TryGet(ueTag, out bool? t) && t == true;
+		=> new DynamicData(screen).TryGet(ueTag, out bool? t) && t == true;
 
 	internal static void SetUe(this SolitaireScreen screen, bool value)
-		=> DynamicData.For(screen).Set(ueTag, value);
+		=> new DynamicData(screen).Set(ueTag, value);
 
 	internal static bool IsCurrentSolitaireUe()
-		=> GameLogic.field_2434.method_938() is SolitaireScreen screen && screen.IsUe();
+		=> GameLogic.instance.GetLastScreen() is SolitaireScreen screen && screen.IsUe();
 }
 
 internal static class RandomExt{
 
-	public static T Choose<T>(this Random rng, List<T> from) => from[rng.Next(from.Count)];
-
-	public static T ChooseOrElse<T>(this Random rng, List<T> from, T fallback) => from.Count > 0 ? rng.Choose(from) : fallback;
+	public static T ChooseOrElse<T>(this Random rng, List<T> from, T fallback) => from.Count > 0 ? rng.GetElement(from) : fallback;
 }
