@@ -1,36 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
   </PropertyGroup>
   
   <PropertyGroup>
     <LangVersion>10</LangVersion>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<!-- Path to Opus Magnum folder, Contains Lightning.exe et.al -->
+		<OpusDir>D:\C#_projects\Quintessential\bin\Debug\TestEnvironment</OpusDir>
+	</PropertyGroup>
+
   <ItemGroup>
     <Reference Include="Lightning">
-      <HintPath>..\..\..\ModdedLightning.exe</HintPath>
+      <HintPath>$(OpusDir)\ModdedLightning.exe</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="MMHOOK_ModdedLightning">
-      <HintPath>..\..\..\MMHOOK_ModdedLightning.dll</HintPath>
+      <HintPath>$(OpusDir)\MMHOOK_ModdedLightning.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\Mono.Cecil.dll</HintPath>
+      <HintPath>$(OpusDir)\Mono.Cecil.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>..\..\..\MonoMod.RuntimeDetour.dll</HintPath>
+      <HintPath>$(OpusDir)\MonoMod.RuntimeDetour.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="MonoMod.Utils">
-      <HintPath>..\..\..\MonoMod.Utils.dll</HintPath>
+      <HintPath>$(OpusDir)\MonoMod.Utils.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="YamlDotNet">
-      <HintPath>..\..\..\YamlDotNet.dll</HintPath>
+      <HintPath>$(OpusDir)\YamlDotNet.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
   </ItemGroup>
