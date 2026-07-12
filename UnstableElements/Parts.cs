@@ -272,9 +272,7 @@ internal static class Parts{
 								qs2.molecule.RemoveAtom(qs2.pos);
 								qs3.molecule.RemoveAtom(qs3.pos);
 								// show the removal effects for qs
-								seb.consumptionEffects.Add(new ConsumptionEffect(seb, qs1.molecule));
-								seb.consumptionEffects.Add(new ConsumptionEffect(seb, qs2.molecule));
-								seb.consumptionEffects.Add(new ConsumptionEffect(seb, qs3.molecule));
+                                seb.consumptionEffects.Add(new ConsumptionEffect(seb, new AtomReference[] { qs1, qs2, qs3 }));
 								// upgrade effect for gold -> uranium
 								gold.atom.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, gold.atomType, Assets.textures.field_81.field_614, 30f);
 								// glowy effect on central hex
