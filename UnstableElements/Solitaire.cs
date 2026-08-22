@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using MonoMod.Utils;
-using Quintessential;
 
 namespace UnstableElements;
 
 public class Solitaire{
-
-	// TODO: just run hookgen with private methods on please
-	private static Hook hookJournalEntryRender, hookSolitaireStateGetter, hookSolitaireStateSetter;
-
-	private static Texture sigmarSprite, sigmarHoverSprite;
+	public static Texture sigmarSprite, sigmarHoverSprite;
 	private static HexIndex[] indicies = new DynamicData(typeof(SolitaireScreen)).Get<HexIndex[]>("orderedBoardHexes");
 	
 	// current solitaire state
@@ -37,34 +31,12 @@ public class Solitaire{
 	public static AtomType Gold = AtomTypes.gold;
 
 	internal static void Load(){
-		On.SolitaireFileManager.GetRandomFromFile += OnGenerateSolitaireBoard;
-		
-		hookJournalEntryRender = new Hook(
-			typeof(JournalScreen).GetMethod("RenderPuzzleSelect", BindingFlags.Instance | BindingFlags.NonPublic),
-			typeof(Solitaire).GetMethod("OnJournalEntryRender", BindingFlags.Static | BindingFlags.NonPublic)
-		);
-		hookSolitaireStateGetter = new Hook(
-			typeof(SolitaireScreen).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic),
-			typeof(Solitaire).GetMethod("OnSolitaireScreenGetState", BindingFlags.Static | BindingFlags.NonPublic)
-		);
-		hookSolitaireStateSetter = new Hook(
-			typeof(SolitaireScreen).GetMethod("SetState", BindingFlags.Instance | BindingFlags.NonPublic),
-			typeof(Solitaire).GetMethod("OnSolitaireScreenSetState", BindingFlags.Static | BindingFlags.NonPublic)
-		);
 
 		sigmarSprite = AssetLoaderHelper.LoadTexture("UeJournal/sigmar");
 		sigmarHoverSprite = AssetLoaderHelper.LoadTexture("UeJournal/sigmar_hover");
 	}
-
-	internal static void Unload(){
-		On.SolitaireFileManager.GetRandomFromFile -= OnGenerateSolitaireBoard;
-		
-		hookJournalEntryRender?.Dispose();
-		hookSolitaireStateGetter?.Dispose();
-		hookSolitaireStateSetter?.Dispose();
-	}
-
-	private static SolitaireGameState GenerateSolitaireBoard(){
+	
+	public static SolitaireGameState GenerateSolitaireBoard(){
 		SolitaireGameState state = new(){
 			atoms = { // gold in the centre
 				[new HexIndex(5, 0)] = Gold
@@ -144,42 +116,6 @@ public class Solitaire{
 		}
 
 		return maxBlanks >= threshold;
-	}
-	
-	private static SolitaireGameState OnGenerateSolitaireBoard(On.SolitaireFileManager.orig_GetRandomFromFile orig, SolitaireType type){
-		return SolitaireExt.IsCurrentSolitaireUe() ? GenerateSolitaireBoard() : orig(type);
-	}
-	
-	private delegate void orig_method_1040(JournalScreen self, Puzzle puzzle, Vector2 pos, bool big);
-	private static void OnJournalEntryRender(orig_method_1040 orig, JournalScreen self, Puzzle puzzle, Vector2 pos, bool big){
-		if(puzzle.puzzleId == "QuickIron"){
-			Texture puzzleBg = big ? Assets.textures.journal.puzzle_large : Assets.textures.journal.puzzle_small;
-			Texture tick = true /* TODO: count wins */ ? Assets.textures.puzzle_select.list_checked : Assets.textures.puzzle_select.list_unchecked;
-			Texture divider = big ? Assets.textures.journal.divider_large : Assets.textures.journal.divider_small;
-			Bounds2 bounds = Bounds2.WithSize(pos, puzzleBg.size.ToVector2());
-			bool hover = bounds.Contains(Input.MousePos());
-			TextureRenderer.RenderText("Shattered Garden", pos + new Vector2(9, -19), Assets.fonts.crimson_15, class_181.field_1718, 0, 1f, 0.6f, float.MaxValue, float.MaxValue, 0, new Color(), null, int.MaxValue, false, true);
-			UI.DrawTexture(tick, pos + new Vector2(puzzleBg.size.X - 27, -23f));
-			UI.DrawTexture(puzzleBg, pos);
-			UI.DrawTexture(divider, pos + new Vector2(7f, -34f));
-			UI.DrawTexture(hover ? sigmarHoverSprite : sigmarSprite, bounds.Min + new Vector2(13f, 13f));
-			if(hover && Input.IsLeftClickPressed()){
-				var solitaireScreen = new SolitaireScreen((SolitaireType)1);
-				solitaireScreen.SetUe(true);
-				UI.OpenScreen(solitaireScreen);
-				Assets.sounds.click_button.method_28(1f);
-			}
-		}else
-			orig(self, puzzle, pos, big);
-	}
-
-	private static SolitaireState OnSolitaireScreenGetState(Func<SolitaireScreen, SolitaireState> orig, SolitaireScreen self)
-		=> self.IsUe() ? UeSolitaireState : orig(self);
-
-	private static void OnSolitaireScreenSetState(Action<SolitaireScreen, SolitaireState> orig, SolitaireScreen self, SolitaireState next){
-		if(self.IsUe())
-			UeSolitaireState = next;
-		else orig(self, next);
 	}
 }
 

@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="Lightning">
-      <HintPath>$(OpusDir)\ModdedLightning.dll</HintPath>
+      <HintPath>$(OpusDir)\DevLightning.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="Mono.Cecil">

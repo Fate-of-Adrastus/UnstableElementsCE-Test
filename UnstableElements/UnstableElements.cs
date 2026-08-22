@@ -3,9 +3,12 @@ using Quintessential;
 
 namespace UnstableElements;
 
-public class UnstableElements : QuintessentialMod{
+public class UnstableElements : QuintessentialMod {
+    public override string ModId => "unstable_elements";
+	public static UnstableElements Instance { get; }
 
-	public override void Load(){
+
+    public override void Load(){
 		
 	}
 
@@ -14,9 +17,7 @@ public class UnstableElements : QuintessentialMod{
 	}
 
 	public override void Unload(){
-		Atoms.Unload();
-		Parts.Unload();
-		Solitaire.Unload();
+
 	}
 
 	public override void LoadPuzzleContent(){

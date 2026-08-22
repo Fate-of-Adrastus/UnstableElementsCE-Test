@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using MonoMod.Cil;
-using MonoMod.Utils;
 using Quintessential;
 
 namespace UnstableElements;
@@ -12,12 +9,10 @@ internal static class Atoms{
 	
 	public static AtomType Aether, Uranium;
 
-	private static readonly List<AtomType> UraniumIsotopes = new(), SlowShakingIso = new(), FastShakingIso = new();
+    public static readonly List<AtomType> UraniumIsotopes = new(), SlowShakingIso = new(), FastShakingIso = new();
 
-	private static readonly AtomTypeEq AtomComparator = new();
-	private static readonly Random UraniumShakeCounter = new(85934);
-	private static ILHook SimValidationHook;
-	private static Hook AetherBlockerHook;
+    public static readonly AtomTypeEq AtomComparator = new();
+    public static readonly Random UraniumShakeCounter = new(85934);
 
 	public static void AddAtomTypes(){
 		// Aether atom type
@@ -122,22 +117,6 @@ internal static class Atoms{
 							}
 			}
 		});
-
-		// Uranium visuals (shaking, heating)
-		On.Editor.RenderAtom += OnAtomRender;
-		// Molecule editor warning for pure-aether atoms
-		//On.MoleculeEditorScreen.RenderFrame += OnMoleculeEditorRender;
-		// Shaking uranium validation
-        SimValidationHook = new(typeof(Sim).GetMethod("IsSameMolecule", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(Molecule), typeof(Molecule) }, null), ModSimValidate);
-		// Blocking unstable pure-aether inputs
-		AetherBlockerHook = new(typeof(Sim).GetMethod("HasOverlap", BindingFlags.NonPublic | BindingFlags.Instance), CheckInputProduction);
-	}
-
-	public static void Unload(){
-		On.Editor.RenderAtom -= OnAtomRender;
-		//On.MoleculeEditorScreen.RenderFrame -= OnMoleculeEditorRender;
-		SimValidationHook.Dispose();
-		AetherBlockerHook.Dispose();
 	}
 
 	public static void DoUraniumDecay(Molecule m, Atom u, HexIndex pos, SolutionEditorBase seb){
@@ -148,56 +127,27 @@ internal static class Atoms{
 
 	public static bool IsUraniumState(AtomType type) => UraniumIsotopes.Contains(type, AtomComparator);
 
-	private static void OnAtomRender(On.Editor.orig_RenderAtom orig, AtomType type, Vector2 position, float param_4582, float param_4583, float param_4584, float param_4585, float param_4586, float param_4587, Texture overrideShadow, Texture maskM, bool param_4590){
-		if(SlowShakingIso.Contains(type, AtomComparator))
-			position += new Vector2(UraniumShakeCounter.GetFloat(-4,4) / 4f, UraniumShakeCounter.GetFloat(-4,4) / 4f);
-		if(FastShakingIso.Contains(type, AtomComparator))
-			position += new Vector2(UraniumShakeCounter.GetFloat(-4, 4) / 2f, UraniumShakeCounter.GetFloat(-4,4) / 2f);
-		orig(type, position, param_4582, param_4583, param_4584, param_4585, param_4586, param_4587, overrideShadow, maskM, param_4590);
-	}
+    //private static void OnMoleculeEditorRender(On.MoleculeEditorScreen.orig_RenderFrame orig, MoleculeEditorScreen self, float deltaTime) {
+    //	orig(self, deltaTime);
+    //	DynamicData selfData = new(self);
+    //	// if there's no existing error...
+    //	if(!selfData.Get<Maybe<LocString>>("errorMessage").HasValue()){
+    //		Molecule m = selfData.Get<Molecule>("molecule");
+    //		// and there are only a nonzero amount of Aether atoms...
+    //		if(m.GetAtoms().Count > 0 && m.GetAtoms().Values.Select(u => u.atomType).All(u => u.Equals(Aether))){
+    //			// display a warning
+    //			Vector2 sizeM = new Vector2(1516f, 922f);
+    //			Vector2 centreM = (InputManager.screenSize / 2 - sizeM / 2 + new Vector2(-2f, -11f)).Rounded();
+    //            UIUtils.RenderScreenTitle("WARNING: Pure-aether molecules require a Glyph of Tranquility to handle.", centreM + new Vector2(471f, 107f), 922, false, false);
+    //		}
+    //	}
+    //}
 
-	private static void ModSimValidate(ILContext il){
-		ILCursor cursor = new(il);
-		while(cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdfld("Atom", "atomType"))){
-			cursor.Remove();
-			cursor.EmitDelegate<Func<Atom, AtomType>>(u => {
-				AtomType type = u.atomType;
-				return IsUraniumState(type) ? Uranium : type;
-			});
-		}
-	}
+    public static bool IsHexStabilized(HexIndex h) => Parts.TranquilityHexes.Contains(h) || Parts.OtherStableHexes.Contains(h);
 
-	private static void OnMoleculeEditorRender(On.MoleculeEditorScreen.orig_RenderFrame orig, MoleculeEditorScreen self, float deltaTime) {
-		orig(self, deltaTime);
-		DynamicData selfData = new(self);
-		// if there's no existing error...
-		if(!selfData.Get<Maybe<LocString>>("errorMessage").HasValue()){
-			Molecule m = selfData.Get<Molecule>("molecule");
-			// and there are only a nonzero amount of Aether atoms...
-			if(m.GetAtoms().Count > 0 && m.GetAtoms().Values.Select(u => u.atomType).All(u => u.Equals(Aether))){
-				// display a warning
-				Vector2 sizeM = new Vector2(1516f, 922f);
-				Vector2 centreM = (InputManager.screenSize / 2 - sizeM / 2 + new Vector2(-2f, -11f)).Rounded();
-                UIUtils.RenderScreenTitle("WARNING: Pure-aether molecules require a Glyph of Tranquility to handle.", centreM + new Vector2(471f, 107f), 922, false, false);
-			}
-		}
-	}
 
-	private static bool IsHexStabilized(HexIndex h) => Parts.TranquilityHexes.Contains(h) || Parts.OtherStableHexes.Contains(h);
-
-	public delegate bool orig_HasOverlap(Sim self, Molecule toCheck, HashSet<HexIndex> moleculeFootprint);
-
-	public static bool CheckInputProduction(orig_HasOverlap orig, Sim self, Molecule toCheck, HashSet<HexIndex> moleculeFootprint){
-		bool blocked = orig(self, toCheck, moleculeFootprint);
-		if(!blocked) // if its not blocked by collisions, but is made of Aether and not stabilized, block it
-			if(toCheck.GetAtoms().Values.Any() && toCheck.GetAtoms().Values.Select(u => u.atomType).All(u => u.QuintAtomType?.Equals(Aether.QuintAtomType) ?? false))
-				if(!toCheck.GetAtoms().Keys.All(IsHexStabilized))
-					return true;
-		return blocked;
-	}
-
-	// TODO: fix properly in quintessential
-	private class AtomTypeEq : IEqualityComparer<AtomType>{
+    // TODO: fix properly in quintessential
+    public class AtomTypeEq : IEqualityComparer<AtomType>{
 		public bool Equals(AtomType x, AtomType y){
 			return x.QuintAtomType == y.QuintAtomType;
 		}

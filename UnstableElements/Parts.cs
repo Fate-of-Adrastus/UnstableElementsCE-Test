@@ -128,18 +128,18 @@ internal static class Parts{
 
 		QApi.AddPartType(Irradiation, (part, pos, editor, renderer) => {
 			Vector2 vector2 = new(83f, 119f);
-			renderer.method_523(IrradiationBase, new Vector2(0.0f, -1f), vector2, 0.0f);
+			renderer.RenderBase(IrradiationBase, new Vector2(0.0f, -1f), vector2, 0.0f);
 			foreach(HexIndex idx in part.GetType().glyphHexes){
 				if(idx is { Q: 0, R: 0 }){
-					renderer.method_530(Assets.textures.parts.bonder_shadow, idx, 0);
-					renderer.method_528(IrradiationMetalBowl, idx, Vector2.Zero);
-					renderer.method_529(IrradiationGoldSymbol, idx, Vector2.Zero);
+					renderer.RenderShadowCircle(Assets.textures.parts.bonder_shadow, idx, 0);
+					renderer.RenderRotating(IrradiationMetalBowl, idx, Vector2.Zero);
+					renderer.RenderUpright(IrradiationGoldSymbol, idx, Vector2.Zero);
 				}
 				else{
-					renderer.method_530(Assets.textures.parts.bonder_shadow, idx, 0);
-					renderer.method_530(Assets.textures.parts.projection_glyph.quicksilver_input, idx, 0);
+					renderer.RenderShadowCircle(Assets.textures.parts.bonder_shadow, idx, 0);
+					renderer.RenderShadowCircle(Assets.textures.parts.projection_glyph.quicksilver_input, idx, 0);
 					// should be 272?
-					renderer.method_529(Assets.textures.parts.projection_glyph.quicksilver_symbol, idx, Vector2.Zero);
+					renderer.RenderUpright(Assets.textures.parts.projection_glyph.quicksilver_symbol, idx, Vector2.Zero);
 				}
 			}
 
@@ -148,25 +148,25 @@ internal static class Parts{
 				if(hexIndex != new HexIndex(0, 0)){
 					int index = i - 1;
 					float num = new HexRotation(index * 2).ToRadians();
-					renderer.method_522(Assets.textures.parts.projection_glyph.bond, new Vector2(-30f, 12f), num);
+					renderer.RenderBase(Assets.textures.parts.projection_glyph.bond, new Vector2(-30f, 12f), num);
 				}
 			}
 		});
 		QApi.AddPartType(Volatility, (part, pos, editor, renderer) => {
 			Texture calcinatorBase = Assets.textures.parts.calcinator_base;
 			Vector2 centre = (calcinatorBase.size.ToVector2() / 2).Rounded() + new Vector2(0, 1);
-			renderer.method_521(calcinatorBase, centre);
-			renderer.method_530(Assets.textures.parts.animismus.ring_shadow, new HexIndex(0, 0), 3);
-			renderer.method_528(VolatilityBowl, new HexIndex(0, 0), Vector2.Zero);
-			renderer.method_521(VolatilitySymbol, centre);
+			renderer.RenderBase(calcinatorBase, centre);
+			renderer.RenderShadowCircle(Assets.textures.parts.animismus.ring_shadow, new HexIndex(0, 0), 3);
+			renderer.RenderRotating(VolatilityBowl, new HexIndex(0, 0), Vector2.Zero);
+			renderer.RenderBase(VolatilitySymbol, centre);
 		});
 		QApi.AddPartType(Tranquility, (part, pos, editor, renderer) => {
 			Vector2 vector2 = new(42, 48);
-			renderer.method_523(TranquilityBase, new Vector2(-1, -1), vector2, 0);
+			renderer.RenderBase(TranquilityBase, new Vector2(-1, -1), vector2, 0);
 			HexIndex qsSite = new(0, 1);
-			renderer.method_530(Assets.textures.parts.bonder_shadow, qsSite, 0);
-			renderer.method_528(TranquilityMetalBowl, qsSite, Vector2.Zero);
-			renderer.method_529(TranquilityQuicksilverSymbol, qsSite, Vector2.Zero);
+			renderer.RenderShadowCircle(Assets.textures.parts.bonder_shadow, qsSite, 0);
+			renderer.RenderRotating(TranquilityMetalBowl, qsSite, Vector2.Zero);
+			renderer.RenderUpright(TranquilityQuicksilverSymbol, qsSite, Vector2.Zero);
 
 			double time = Math.Sin(new DeltaTime(Time.Now().Ticks).InSeconds());
 			float pulse = (float)(time / 3 + .66);
@@ -182,10 +182,10 @@ internal static class Parts{
 			var renderInfo = editor.GetIntermState(part, pos);
 
 			// base
-			renderer.method_523(SublimationBelowIris, new Vector2(-1, -1), vector2, 0);
+			renderer.RenderBase(SublimationBelowIris, new Vector2(-1, -1), vector2, 0);
 
 			// centre hex
-			renderer.method_529(SublimationQuintessenceSymbol, new(0, 0), new(3, 3));
+			renderer.RenderUpright(SublimationQuintessenceSymbol, new(0, 0), new(3, 3));
 			if(myState.isProcessing) // disappearing quintessence for active glyph
 				Editor.RenderMolecule(Molecule.CreateMonoatomic(AtomTypes.quintessence), RelativeToGlobal(renderInfo, new(0, 0)), new(0, 0), 0.0f, 1f, 1f - editor.GetCycleTime(), 1f, false, null);
 
@@ -208,17 +208,17 @@ internal static class Parts{
 				Editor.RenderMolecule(stbAetherRot, RelativeToGlobal(renderInfo, new(0, 0)), new(0, 0), renderInfo.rotation, 1f, progress, 1f, false, null);
 			}
 
-			renderer.method_529(SublimationSaltIris[animIdx], new(0, 1), new(2, 0));
-			renderer.method_529(SublimationSaltIris[animIdx], new(0, -1), new(2, 0));
-			renderer.method_529(SublimationAetherIris[animIdx], new(1, 1), new(2, 0));
-			renderer.method_529(SublimationAetherIris[animIdx], new(-1, -1), new(2, 0));
+			renderer.RenderUpright(SublimationSaltIris[animIdx], new(0, 1), new(2, 0));
+			renderer.RenderUpright(SublimationSaltIris[animIdx], new(0, -1), new(2, 0));
+			renderer.RenderUpright(SublimationAetherIris[animIdx], new(1, 1), new(2, 0));
+			renderer.RenderUpright(SublimationAetherIris[animIdx], new(-1, -1), new(2, 0));
 			if(progress > 0.5){ // render over irises
 				Editor.RenderMolecule(stabilizedAether, RelativeToGlobal(renderInfo, new(0, 0)), new(0, 0), renderInfo.rotation, 1f, progress, 1f, false, null);
 				Editor.RenderMolecule(stbAetherRot, RelativeToGlobal(renderInfo, new(0, 0)), new(0, 0), renderInfo.rotation, 1f, progress, 1f, false, null);
 			}
 
 			// top
-			renderer.method_523(SublimationAboveIris, new Vector2(-1, -1), vector2, 0);
+			renderer.RenderBase(SublimationAboveIris, new Vector2(-1, -1), vector2, 0);
 		});
 
 		QApi.AddPartTypeToPanel(Irradiation, PartTypes.triplexBonder);
@@ -359,38 +359,11 @@ internal static class Parts{
 				}
 			}
 		});
-
-		On.SolutionEditorBase.method_1984 += DrawTranquilityField;
-	}
-
-	public static void Unload(){
-		On.SolutionEditorBase.method_1984 -= DrawTranquilityField;
 	}
 
 	private static void DrawForPartWithTint(PartRenderer renderer, Texture tex, Vector2 offset, Vector2 size, float rotation, Color c){
 		Matrix4 tf = Matrix4.GetTranslation((renderer.partPos + offset).ToVector3(0)) * Matrix4.RotXY(renderer.partRotation + rotation) * Matrix4.GetTranslation(-size.ToVector3(0)) * Matrix4.GetScale(tex.size.ToVector3(0));
         TextureRenderer.Render(tex, c, tf);
-	}
-
-	private static void DrawTranquilityField(On.SolutionEditorBase.orig_method_1984 orig, SolutionEditorBase self, Vector2 param_5533, Bounds2 param_5534, Bounds2 param_5535, bool param_5536, Maybe<List<Molecule>> param_5537, bool param_5538){
-		orig(self, param_5533, param_5534, param_5535, param_5536, param_5537, param_5538);
-
-		if(self.GetSimPlayState() != SimPlayState.Stopped){
-			double time = Math.Sin(new DeltaTime(Time.Now().Ticks).InSeconds());
-			float pulse = (float)(time / 4 + .75) / 2.4f;
-
-			if(self is SimpleSolutionEditor)
-				pulse = 0.25f; // constant brightness in GIFs
-
-			Color tint = TranquilityZoneColor;
-			HexGrid conv = HexGrid.standardGrid;
-			tint.A *= pulse;
-			foreach(var hex in TranquilityHexes){
-				Vector2 hexAsVec = conv.ToPixelCoords(hex) + param_5533 - new Vector2(2, 8);
-				Matrix4 tf = Matrix4.GetTranslation(hexAsVec.ToVector3(0)) * Matrix4.RotXY(0) * Matrix4.GetTranslation(new Vector3(-40, -40, 0)) * Matrix4.GetScale(TranquilityZoneHex.size.ToVector3(0));
-				TextureRenderer.Render(TranquilityZoneHex, tint, tf);
-			}
-		}
 	}
 
 	private static Vector2 RelativeToGlobal(IntermediatePartState partRenderInfo, HexIndex pos) => partRenderInfo.pos + HexGrid.standardGrid.ToPixelCoords(pos).Rotated(partRenderInfo.rotation);
