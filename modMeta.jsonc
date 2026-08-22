@@ -1,13 +1,13 @@
 {
   "mod_id": "unstable_elements",
   "version": "0.3.0",
-  "mod_page_url": "https://github.com/Fate-of-Adrastus/UnstableElementsCE-Test",
+  "mod_page_url": "https://github.com/l-Luna/UnstableElements",
   "dll": "UnstableElements.dll",
   "authors": [],
   "icon": "textures/icons/UnstableElements",
   "mappings": "",
   "dependencies": {
-    "quintessential_core": "[5.6,6.0)"
+    "quintessential_core": "[0.5.6,0.6)"
   },
   "conflicts": []
 }
