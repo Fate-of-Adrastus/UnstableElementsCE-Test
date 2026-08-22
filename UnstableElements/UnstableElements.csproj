@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -10,24 +10,16 @@
 
 	<PropertyGroup>
 		<!-- Path to Opus Magnum folder, Contains Lightning.exe et.al -->
-		<OpusDir>D:\C#_projects\Quintessential\bin\Debug\TestEnvironment</OpusDir>
+		<OpusDir>D:\C#_projects\UnstableElements\UnstableElements\bin\Debug\TestEnvironment\modded</OpusDir>
 	</PropertyGroup>
 
   <ItemGroup>
     <Reference Include="Lightning">
-      <HintPath>$(OpusDir)\ModdedLightning.exe</HintPath>
-      <CopyLocal>False</CopyLocal>
-    </Reference>
-    <Reference Include="MMHOOK_ModdedLightning">
-      <HintPath>$(OpusDir)\MMHOOK_ModdedLightning.dll</HintPath>
+      <HintPath>$(OpusDir)\ModdedLightning.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>$(OpusDir)\Mono.Cecil.dll</HintPath>
-      <CopyLocal>False</CopyLocal>
-    </Reference>
-    <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>$(OpusDir)\MonoMod.RuntimeDetour.dll</HintPath>
       <CopyLocal>False</CopyLocal>
     </Reference>
     <Reference Include="MonoMod.Utils">
@@ -36,30 +28,6 @@
     </Reference>
     <Reference Include="YamlDotNet">
       <HintPath>$(OpusDir)\YamlDotNet.dll</HintPath>
-      <CopyLocal>False</CopyLocal>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Update="System">
-      <CopyLocal>False</CopyLocal>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Update="System.Core">
-      <CopyLocal>False</CopyLocal>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Update="System.Data">
-      <CopyLocal>False</CopyLocal>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Update="System.Drawing">
       <CopyLocal>False</CopyLocal>
     </Reference>
   </ItemGroup>

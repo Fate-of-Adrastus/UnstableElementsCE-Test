@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using Quintessential;
 
@@ -14,7 +13,7 @@ public class Solitaire{
 	private static Hook hookJournalEntryRender, hookSolitaireStateGetter, hookSolitaireStateSetter;
 
 	private static Texture sigmarSprite, sigmarHoverSprite;
-	private static HexIndex[] indicies = new DynamicData(typeof(SolitaireScreen)).Get<HexIndex[]>("field_3867");
+	private static HexIndex[] indicies = new DynamicData(typeof(SolitaireScreen)).Get<HexIndex[]>("orderedBoardHexes");
 	
 	// current solitaire state
 	public static SolitaireState UeSolitaireState;
@@ -154,9 +153,9 @@ public class Solitaire{
 	private delegate void orig_method_1040(JournalScreen self, Puzzle puzzle, Vector2 pos, bool big);
 	private static void OnJournalEntryRender(orig_method_1040 orig, JournalScreen self, Puzzle puzzle, Vector2 pos, bool big){
 		if(puzzle.puzzleId == "QuickIron"){
-			Texture puzzleBg = big ? Assets.textures.field_88.field_894 : Assets.textures.field_88.field_895;
-			Texture tick = true /* TODO: count wins */ ? Assets.textures.field_96.field_879 : Assets.textures.field_96.field_882;
-			Texture divider = big ? Assets.textures.field_88.field_892 : Assets.textures.field_88.field_893;
+			Texture puzzleBg = big ? Assets.textures.journal.puzzle_large : Assets.textures.journal.puzzle_small;
+			Texture tick = true /* TODO: count wins */ ? Assets.textures.puzzle_select.list_checked : Assets.textures.puzzle_select.list_unchecked;
+			Texture divider = big ? Assets.textures.journal.divider_large : Assets.textures.journal.divider_small;
 			Bounds2 bounds = Bounds2.WithSize(pos, puzzleBg.size.ToVector2());
 			bool hover = bounds.Contains(Input.MousePos());
 			TextureRenderer.RenderText("Shattered Garden", pos + new Vector2(9, -19), Assets.fonts.crimson_15, class_181.field_1718, 0, 1f, 0.6f, float.MaxValue, float.MaxValue, 0, new Color(), null, int.MaxValue, false, true);
@@ -168,7 +167,7 @@ public class Solitaire{
 				var solitaireScreen = new SolitaireScreen((SolitaireType)1);
 				solitaireScreen.SetUe(true);
 				UI.OpenScreen(solitaireScreen);
-				Assets.sounds.field_1821.method_28(1f);
+				Assets.sounds.click_button.method_28(1f);
 			}
 		}else
 			orig(self, puzzle, pos, big);
@@ -195,7 +194,7 @@ internal static class SolitaireExt{
 		=> new DynamicData(screen).Set(ueTag, value);
 
 	internal static bool IsCurrentSolitaireUe()
-		=> GameLogic.instance.GetLastScreen() is SolitaireScreen screen && screen.IsUe();
+		=> GameLogic.instance.GetCurrentScreen() is SolitaireScreen screen && screen.IsUe();
 }
 
 internal static class RandomExt{

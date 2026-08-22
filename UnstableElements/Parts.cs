@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using MonoMod.Utils;
 using Quintessential;
-using MonoMod.RuntimeDetour;
-using System.Reflection;
 using System;
-using System.Linq;
 
 namespace UnstableElements;
 
@@ -58,8 +55,8 @@ internal static class Parts{
 			description = Translations.Translate("The glyph of irradiation projects an atom of gold into an unstable atom of uranium."), // Description
 			cost = 25, // Cost
 			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = Assets.textures.field_97.field_384, // Shadow/glow
-			strokeTexture = Assets.textures.field_97.field_385, // Stroke/outline
+			glowTexture = Assets.textures.select.tetra_glow, // Shadow/glow
+			strokeTexture = Assets.textures.select.tetra_stroke, // Stroke/outline
 			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/irradiation"), // Panel icon
 			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/irradiation_hovered"), // Hovered panel icon
 			glyphHexes = new HexIndex[]{
@@ -78,8 +75,8 @@ internal static class Parts{
 			description = Translations.Translate("The glyph of volatility causes an atom of uranium to instantly decay, regardless of its heat."), // Description
 			cost = 10, // Cost
 			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = Assets.textures.field_97.field_382, // Shadow/glow
-			strokeTexture = Assets.textures.field_97.field_383, // Stroke/outline
+			glowTexture = Assets.textures.select.single_glow, // Shadow/glow
+			strokeTexture = Assets.textures.select.single_stroke, // Stroke/outline
 			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/volatility"), // Panel icon
 			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/volatility_hovered"), // Hovered panel icon
 			glyphHexes = new HexIndex[]{
@@ -95,8 +92,8 @@ internal static class Parts{
 			description = Translations.Translate("The glyph of tranquility projects a field that stabilizes uranium and aether atoms, preventing their decays."), // Description
 			cost = 40, // Cost
 			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = Assets.textures.field_97.field_386, // Shadow/glow
-			strokeTexture = Assets.textures.field_97.field_387, // Stroke/outline
+			glowTexture = Assets.textures.select.triple_glow, // Shadow/glow
+			strokeTexture = Assets.textures.select.triple_stroke, // Stroke/outline
 			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/tranquility"), // Panel icon
 			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/tranquility_hovered"), // Hovered panel icon
 			glyphHexes = new HexIndex[]{
@@ -134,15 +131,15 @@ internal static class Parts{
 			renderer.method_523(IrradiationBase, new Vector2(0.0f, -1f), vector2, 0.0f);
 			foreach(HexIndex idx in part.GetType().glyphHexes){
 				if(idx is { Q: 0, R: 0 }){
-					renderer.method_530(Assets.textures.field_90.field_164 /*bonder_shadow*/, idx, 0);
+					renderer.method_530(Assets.textures.parts.bonder_shadow, idx, 0);
 					renderer.method_528(IrradiationMetalBowl, idx, Vector2.Zero);
 					renderer.method_529(IrradiationGoldSymbol, idx, Vector2.Zero);
 				}
 				else{
-					renderer.method_530(Assets.textures.field_90.field_164 /*bonder_shadow*/, idx, 0);
-					renderer.method_530(Assets.textures.field_90.field_255.field_293 /*quicksilver_input*/, idx, 0);
+					renderer.method_530(Assets.textures.parts.bonder_shadow, idx, 0);
+					renderer.method_530(Assets.textures.parts.projection_glyph.quicksilver_input, idx, 0);
 					// should be 272?
-					renderer.method_529(Assets.textures.field_90.field_255.field_294 /*quicksilver_symbol*/, idx, Vector2.Zero);
+					renderer.method_529(Assets.textures.parts.projection_glyph.quicksilver_symbol, idx, Vector2.Zero);
 				}
 			}
 
@@ -151,15 +148,15 @@ internal static class Parts{
 				if(hexIndex != new HexIndex(0, 0)){
 					int index = i - 1;
 					float num = new HexRotation(index * 2).ToRadians();
-					renderer.method_522(Assets.textures.field_90.field_255.field_289 /*bond*/, new Vector2(-30f, 12f), num);
+					renderer.method_522(Assets.textures.parts.projection_glyph.bond, new Vector2(-30f, 12f), num);
 				}
 			}
 		});
 		QApi.AddPartType(Volatility, (part, pos, editor, renderer) => {
-			Texture calcinatorBase = Assets.textures.field_90.field_169;
+			Texture calcinatorBase = Assets.textures.parts.calcinator_base;
 			Vector2 centre = (calcinatorBase.size.ToVector2() / 2).Rounded() + new Vector2(0, 1);
 			renderer.method_521(calcinatorBase, centre);
-			renderer.method_530(Assets.textures.field_90.field_228.field_273 /* ring_shadow */, new HexIndex(0, 0), 3);
+			renderer.method_530(Assets.textures.parts.animismus.ring_shadow, new HexIndex(0, 0), 3);
 			renderer.method_528(VolatilityBowl, new HexIndex(0, 0), Vector2.Zero);
 			renderer.method_521(VolatilitySymbol, centre);
 		});
@@ -167,7 +164,7 @@ internal static class Parts{
 			Vector2 vector2 = new(42, 48);
 			renderer.method_523(TranquilityBase, new Vector2(-1, -1), vector2, 0);
 			HexIndex qsSite = new(0, 1);
-			renderer.method_530(Assets.textures.field_90.field_164 /*bonder_shadow*/, qsSite, 0);
+			renderer.method_530(Assets.textures.parts.bonder_shadow, qsSite, 0);
 			renderer.method_528(TranquilityMetalBowl, qsSite, Vector2.Zero);
 			renderer.method_529(TranquilityQuicksilverSymbol, qsSite, Vector2.Zero);
 
@@ -190,7 +187,7 @@ internal static class Parts{
 			// centre hex
 			renderer.method_529(SublimationQuintessenceSymbol, new(0, 0), new(3, 3));
 			if(myState.isProcessing) // disappearing quintessence for active glyph
-				Editor.RenderMolecule(Molecule.GetSinglet(AtomTypes.quintessence), RelativeToGlobal(renderInfo, new(0, 0)), new(0, 0), 0.0f, 1f, 1f - editor.GetCycleTime(), 1f, false, null);
+				Editor.RenderMolecule(Molecule.CreateMonoatomic(AtomTypes.quintessence), RelativeToGlobal(renderInfo, new(0, 0)), new(0, 0), 0.0f, 1f, 1f - editor.GetCycleTime(), 1f, false, null);
 
 			Molecule stabilizedAether = new();
 			stabilizedAether.AddAtom(new Atom(Atoms.Aether), new(1, 1));
@@ -263,9 +260,9 @@ internal static class Parts{
 						   && qs2.atomType == AtomTypes.quicksilver
 						   && qs3.atomType == AtomTypes.quicksilver){
 							// and the quicksilver is not being consumed or held...
-							if(!qs1.doesMoleculeExist && !qs1.isHeldByArm
-							                   && !qs2.doesMoleculeExist && !qs2.isHeldByArm
-							                   && !qs3.doesMoleculeExist && !qs3.isHeldByArm){
+							if(!qs1.inMultiAtomMolecule && !qs1.isHeldByArm
+							                   && !qs2.inMultiAtomMolecule && !qs2.isHeldByArm
+							                   && !qs3.inMultiAtomMolecule && !qs3.isHeldByArm){
 								// transmute the gold and destroy the quicksilver
 								gold.molecule.ReplaceAtom(Atoms.Uranium, gold.pos);
 								qs1.molecule.RemoveAtom(qs1.pos);
@@ -274,14 +271,14 @@ internal static class Parts{
 								// show the removal effects for qs
                                 seb.consumptionEffects.Add(new ConsumptionEffect(seb, new AtomReference[] { qs1, qs2, qs3 }));
 								// upgrade effect for gold -> uranium
-								gold.atom.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, gold.atomType, Assets.textures.field_81.field_614, 30f);
+								gold.atom.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, gold.atomType, Assets.textures.atoms.projection_effect, 30f);
 								// glowy effect on central hex
 								HexIndex pos = part.GetHexPos();
-								Vector2 posAsVec = HexGrid.standardGrid.ToWorldCoords(pos);
-								Texture[] glowFrames = Assets.textures.field_90.field_256;
+								Vector2 posAsVec = HexGrid.standardGrid.ToPixelCoords(pos);
+								Texture[] glowFrames = Assets.textures.parts.projection_glyph_flash;
 								GlyphEffect glowEffect = new(seb, (EffectTimescaleType)1, posAsVec, glowFrames, 30f, Vector2.Zero, 0);
                                 seb.glyphEffects.Add(glowEffect);
-								Assets.sounds.field_1844.method_28(seb.method_506());
+								Assets.sounds.glyph_projection.method_28(seb.method_506());
 							}
 						}
 					}
@@ -310,7 +307,7 @@ internal static class Parts{
 						// if we have an unheld & unbonded quintessence at the centre...
 						if(first && sim.FindAtomRelative(part, new(0, 0)).GetOrDefault(out AtomReference quint)
 						         && quint.atomType == AtomTypes.quintessence
-                                 && !quint.doesMoleculeExist && !quint.isHeldByArm){
+                                 && !quint.inMultiAtomMolecule && !quint.isHeldByArm){
 							// and no atoms are blocking our outputs...
 							if(!sim.FindAtomRelative(part, new(0, 1)).HasValue()
 							   && !sim.FindAtomRelative(part, new(1, 1)).HasValue()
@@ -321,7 +318,7 @@ internal static class Parts{
 								// set this part to be inactive the rest of the cycle
 								mySimState.isProcessing = true;
 								// play the production sound
-								Assets.sounds.field_1841.method_28(seb.method_506());
+								Assets.sounds.glyph_dispersion.method_28(seb.method_506());
 								// mark output positions as collidable
 								HexIndex[] outputs = {
 									new(0, 1),
@@ -331,7 +328,7 @@ internal static class Parts{
 								};
 								List<Sim.Collider> collisions = sim.additionalCollisions;
 								foreach(var hex in outputs){
-									Vector2 vector2 = HexGrid.standardGrid.ToWorldCoords(part.InFrontBy(hex), Vector2.Zero);
+									Vector2 vector2 = HexGrid.standardGrid.ToPixelCoords(part.InFrontBy(hex), Vector2.Zero);
 									Sim.Collider collision = new(){
                                         type = 0,
 										center = vector2,
@@ -389,12 +386,12 @@ internal static class Parts{
 			HexGrid conv = HexGrid.standardGrid;
 			tint.A *= pulse;
 			foreach(var hex in TranquilityHexes){
-				Vector2 hexAsVec = conv.ToWorldCoords(hex) + param_5533 - new Vector2(2, 8);
+				Vector2 hexAsVec = conv.ToPixelCoords(hex) + param_5533 - new Vector2(2, 8);
 				Matrix4 tf = Matrix4.GetTranslation(hexAsVec.ToVector3(0)) * Matrix4.RotXY(0) * Matrix4.GetTranslation(new Vector3(-40, -40, 0)) * Matrix4.GetScale(TranquilityZoneHex.size.ToVector3(0));
 				TextureRenderer.Render(TranquilityZoneHex, tint, tf);
 			}
 		}
 	}
 
-	private static Vector2 RelativeToGlobal(IntermediatePartState partRenderInfo, HexIndex pos) => partRenderInfo.pos + HexGrid.standardGrid.ToWorldCoords(pos).Rotated(partRenderInfo.rotation);
+	private static Vector2 RelativeToGlobal(IntermediatePartState partRenderInfo, HexIndex pos) => partRenderInfo.pos + HexGrid.standardGrid.ToPixelCoords(pos).Rotated(partRenderInfo.rotation);
 }

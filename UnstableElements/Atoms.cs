@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MonoMod.Cil;
-using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using Quintessential;
 
@@ -31,11 +30,11 @@ internal static class Atoms{
             shadow = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_shadow")
 		};
         PrismaticAtomTextures aetherColours = new(){
-            base1 = Assets.textures.field_81.field_613.field_627,
+            base1 = Assets.textures.atoms.elements.quintessence_base,
             colors = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_colors"),
-            mask = Assets.textures.field_81.field_613.field_629,
-            rimlight = Assets.textures.field_81.field_613.field_630
-		};
+            colorsMask = Assets.textures.atoms.elements.quintessence_mask,
+            rimlight = Assets.textures.atoms.elements.quintessence_rimlight
+        };
 		Aether.prismaticTextures = aetherColours;
 		Aether.isPrismatic = true;
 		Aether.QuintAtomType = "UnstableElements:aether";
@@ -51,12 +50,12 @@ internal static class Atoms{
                     elementalName = Translations.Translate("Elemental Uranium"),
                     name = Translations.Translate("Uranium"),
                     symbol = AssetLoaderHelper.LoadTexture($"textures/atoms/leppa/UnstableElements/uranium_symbol_{phase}"),
-                    shadow = Assets.textures.field_81.field_599,
+                    shadow = Assets.textures.atoms.shadow,
                     metallicTextures = new(){
-                        diffuse = Assets.textures.field_81.field_577,
+                        diffuse = Assets.textures.atoms.copper_diffuse,
                         lightramp = AssetLoaderHelper.LoadTexture($"textures/atoms/leppa/UnstableElements/uranium_lightramp_{phase}"),
-						rimlight = Assets.textures.field_81.field_601
-					},
+						rimlight = Assets.textures.atoms.silver_rimlight
+                    },
                     isMetallic = true
 				};
 				if(phase == 0 && turn == 0){
@@ -94,7 +93,7 @@ internal static class Atoms{
 				foreach(var it in toRemove){
 					foreach(KeyValuePair<HexIndex, Atom> atom in it.GetAtoms()){
 						var seb = sim.solutionEditor;
-						seb.field_3936.Add(new GlyphEffect(seb, (EffectTimescaleType)1, HexGrid.standardGrid.ToWorldCoords(atom.Key) + new Vector2(80f, 0.0f), Assets.textures.field_90.field_240 /* or 42? */, 30f, Vector2.Zero, 0.0f));
+						seb.field_3936.Add(new GlyphEffect(seb, (EffectTimescaleType)1, HexGrid.standardGrid.ToPixelCoords(atom.Key) + new Vector2(80f, 0.0f), Assets.textures.parts.disposal_flash /* or 42? */, 30f, Vector2.Zero, 0.0f));
 					}
 
 					molecules.Remove(it);
@@ -144,7 +143,7 @@ internal static class Atoms{
 	public static void DoUraniumDecay(Molecule m, Atom u, HexIndex pos, SolutionEditorBase seb){
 		AtomType from = u.atomType;
 		m.ReplaceAtom(AtomTypes.lead, pos);
-		u.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, from, Assets.textures.field_81.field_614, 30f);
+		u.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, from, Assets.textures.atoms.projection_effect, 30f);
 	}
 
 	public static bool IsUraniumState(AtomType type) => UraniumIsotopes.Contains(type, AtomComparator);
