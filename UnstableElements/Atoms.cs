@@ -17,33 +17,22 @@ internal static class Atoms{
 	public static void AddAtomTypes(){
 		// Aether atom type
 		Aether = new(){
-            byteId = 64,
-            defaultName = Translations.WithAllLanguages("Aether"),
-            elementalName = Translations.Translate("Elemental Aether"),
-            name = Translations.Translate("Aether"),
             symbol = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_symbol"),
-            shadow = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_shadow")
-		};
-        PrismaticAtomTextures aetherColours = new(){
-            base1 = Assets.textures.atoms.elements.quintessence_base,
-            colors = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_colors"),
-            colorsMask = Assets.textures.atoms.elements.quintessence_mask,
-            rimlight = Assets.textures.atoms.elements.quintessence_rimlight
+            shadow = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_shadow"),
+            isPrismatic = true,
+            prismaticTextures = new(){
+                base1 = Assets.textures.atoms.elements.quintessence_base,
+                colors = AssetLoaderHelper.LoadTexture("textures/atoms/leppa/UnstableElements/aether_colors"),
+                colorsMask = Assets.textures.atoms.elements.quintessence_mask,
+                rimlight = Assets.textures.atoms.elements.quintessence_rimlight
+            }
         };
-		Aether.prismaticTextures = aetherColours;
-		Aether.isPrismatic = true;
-		Aether.QuintAtomType = "UnstableElements:aether";
-
-		QApi.AddAtomType(Aether);
+        UnstableElements.Instance.AddAtomType(Aether, "aether");
 
 		// Uranium atom types
 		for(int phase = 0; phase < 3; phase++)
 			for(int turn = 0; turn < 3; turn++){
 				AtomType isotope = new(){
-                    byteId = 65,
-                    defaultName = Translations.WithAllLanguages("Uranium"),
-                    elementalName = Translations.Translate("Elemental Uranium"),
-                    name = Translations.Translate("Uranium"),
                     symbol = AssetLoaderHelper.LoadTexture($"textures/atoms/leppa/UnstableElements/uranium_symbol_{phase}"),
                     shadow = Assets.textures.atoms.shadow,
                     metallicTextures = new(){
@@ -54,18 +43,21 @@ internal static class Atoms{
                     isMetallic = true
 				};
 				if(phase == 0 && turn == 0){
-					isotope.QuintAtomType = "UnstableElements:uranium";
-					Uranium = isotope;
-				}else
-					isotope.QuintAtomType = $"UnstableElements:uranium:{phase}_{turn}";
+                    Uranium = isotope;
+				} else {
+					isotope.QuintAtomType = UnstableElements.Instance.GetIdentifier($"uranium_{phase}_{turn}");
+					isotope.name = Translations.Translate("unstable_elements.atoms.uranium");
+					isotope.elementalName = Translations.Translate("unstable_elements.atoms.uranium.elemental");
+					isotope.defaultName = Translations.Translate("unstable_elements.atoms.uranium").locDictionary[Language.English];
+				}
 				UraniumIsotopes.Add(isotope);
 				if(phase == 1)
 					SlowShakingIso.Add(isotope);
 				else if(phase == 2)
 					FastShakingIso.Add(isotope);
 			}
-		
-		QApi.AddAtomType(Uranium);
+
+        UnstableElements.Instance.AddAtomType(Uranium, "uranium");
 
 		// Aether self-destruction
 		QApi.RunAfterCycle((sim, first) => {

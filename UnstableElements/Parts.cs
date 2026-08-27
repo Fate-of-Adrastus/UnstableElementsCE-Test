@@ -50,83 +50,71 @@ internal static class Parts{
 		}
 
 		Irradiation = new(){
-			id = "unstable-elements-irradiation", // ID
-			name = Translations.Translate("Glyph of Irradiation"), // Name
-			description = Translations.Translate("The glyph of irradiation projects an atom of gold into an unstable atom of uranium."), // Description
-			cost = 25, // Cost
-			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = Assets.textures.select.tetra_glow, // Shadow/glow
-			strokeTexture = Assets.textures.select.tetra_stroke, // Stroke/outline
-			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/irradiation"), // Panel icon
-			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/irradiation_hovered"), // Hovered panel icon
+			cost = 25,
+			isFullHexCover = true,
+			glowTexture = Assets.textures.select.tetra_glow,
+			strokeTexture = Assets.textures.select.tetra_stroke,
+			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/irradiation"),
+			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/irradiation_hovered"),
 			glyphHexes = new HexIndex[]{
 				new(0, 0),
 				new(-1, 1),
 				new(1, 0),
 				new(0, -1)
-			}, // Spaces used
+			},
 			permissionCategory = PuzzlePermissions.None,
-			CustomPermissionCheck = perms => perms.Contains("UnstableElements:irradiation")
+			CustomPermissionCheck = perms => perms.Contains(UnstableElements.Instance.GetIdentifier("irradiation"))
 		};
 
 		Volatility = new(){
-			id = "unstable-elements-volatility", // ID
-			name = Translations.Translate("Glyph of Volatility"), // Name
-			description = Translations.Translate("The glyph of volatility causes an atom of uranium to instantly decay, regardless of its heat."), // Description
-			cost = 10, // Cost
-			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = Assets.textures.select.single_glow, // Shadow/glow
-			strokeTexture = Assets.textures.select.single_stroke, // Stroke/outline
-			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/volatility"), // Panel icon
-			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/volatility_hovered"), // Hovered panel icon
+			cost = 10,
+			isFullHexCover = true,
+			glowTexture = Assets.textures.select.single_glow,
+			strokeTexture = Assets.textures.select.single_stroke,
+			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/volatility"),
+			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/volatility_hovered"),
 			glyphHexes = new HexIndex[]{
 				new(0, 0)
-			}, // Spaces used
+			},
 			permissionCategory = PuzzlePermissions.None,
-			CustomPermissionCheck = perms => perms.Contains("UnstableElements:volatility")
+			CustomPermissionCheck = perms => perms.Contains(UnstableElements.Instance.GetIdentifier("volatility"))
 		};
 
 		Tranquility = new(){
-			id = "unstable-elements-tranquility", // ID
-			name = Translations.Translate("Glyph of Tranquility"), // Name
-			description = Translations.Translate("The glyph of tranquility projects a field that stabilizes uranium and aether atoms, preventing their decays."), // Description
-			cost = 40, // Cost
-			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = Assets.textures.select.triple_glow, // Shadow/glow
-			strokeTexture = Assets.textures.select.triple_stroke, // Stroke/outline
-			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/tranquility"), // Panel icon
-			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/tranquility_hovered"), // Hovered panel icon
+			cost = 40,
+			isFullHexCover = true,
+			glowTexture = Assets.textures.select.triple_glow,
+			strokeTexture = Assets.textures.select.triple_stroke,
+			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/tranquility"),
+			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/tranquility_hovered"),
 			glyphHexes = new HexIndex[]{
 				new(0, 0),
 				new(1, 0),
 				new(0, 1)
-			}, // Spaces used
+			},
 			permissionCategory = PuzzlePermissions.None,
-			CustomPermissionCheck = perms => perms.Contains("UnstableElements:tranquility")
+			CustomPermissionCheck = perms => perms.Contains(UnstableElements.Instance.GetIdentifier("tranquility"))
 		};
 
 		Sublimation = new(){
-			id = "unstable-elements-sublimation", // ID
-			name = Translations.Translate("Glyph of Sublimation"), // Name
-			description = Translations.Translate("The glyph of sublimation splits an atom of quintessence into two molecules of stabilized aether."), // Description
-			cost = 10, // Cost
-			isFullHexCover = true, // Is a glyph (?)
-			glowTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation_glow"), // Shadow/glow
-			strokeTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation_stroke"), // Stroke/outline
-			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation"), // Panel icon
-			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation_hovered"), // Hovered panel icon
+			cost = 10,
+			isFullHexCover = true,
+			glowTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation_glow"),
+			strokeTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation_stroke"),
+			baseTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation"),
+			hoverTexture = AssetLoaderHelper.LoadTexture("textures/parts/leppa/UnstableElements/sublimation_hovered"),
 			glyphHexes = new HexIndex[]{
 				new(0, 0),
 				new(0, 1),
 				new(1, 1),
 				new(0, -1),
 				new(-1, -1)
-			}, // Spaces used
+			},
 			permissionCategory = PuzzlePermissions.None,
-			CustomPermissionCheck = perms => perms.Contains("UnstableElements:sublimation")
+			CustomPermissionCheck = perms => perms.Contains(UnstableElements.Instance.GetIdentifier("sublimation"))
 		};
 
-		QApi.AddPartType(Irradiation, (part, pos, editor, renderer) => {
+        UnstableElements.Instance.AddPartType(Irradiation, "irradiation", (part, pos, editor, renderer) => {
 			Vector2 vector2 = new(83f, 119f);
 			renderer.RenderBase(IrradiationBase, new Vector2(0.0f, -1f), vector2, 0.0f);
 			foreach(HexIndex idx in part.GetType().glyphHexes){
@@ -152,7 +140,7 @@ internal static class Parts{
 				}
 			}
 		});
-		QApi.AddPartType(Volatility, (part, pos, editor, renderer) => {
+        UnstableElements.Instance.AddPartType(Volatility, "volatility", (part, pos, editor, renderer) => {
 			Texture calcinatorBase = Assets.textures.parts.calcinator_base;
 			Vector2 centre = (calcinatorBase.size.ToVector2() / 2).Rounded() + new Vector2(0, 1);
 			renderer.RenderBase(calcinatorBase, centre);
@@ -160,7 +148,7 @@ internal static class Parts{
 			renderer.RenderRotating(VolatilityBowl, new HexIndex(0, 0), Vector2.Zero);
 			renderer.RenderBase(VolatilitySymbol, centre);
 		});
-		QApi.AddPartType(Tranquility, (part, pos, editor, renderer) => {
+        UnstableElements.Instance.AddPartType(Tranquility, "tranquility", (part, pos, editor, renderer) => {
 			Vector2 vector2 = new(42, 48);
 			renderer.RenderBase(TranquilityBase, new Vector2(-1, -1), vector2, 0);
 			HexIndex qsSite = new(0, 1);
@@ -176,7 +164,7 @@ internal static class Parts{
 				DrawForPartWithTint(renderer, TranquilityProjectors, new Vector2(-1, -1), vector2, 0, tint);
 			}
 		});
-		QApi.AddPartType(Sublimation, (part, pos, editor, renderer) => {
+        UnstableElements.Instance.AddPartType(Sublimation, "sublimation", (part, pos, editor, renderer) => {
 			PartSimState myState = editor.GetSimulation().GetSimState(part);
 			Vector2 vector2 = new(330 / 2, 238 / 2);
 			var renderInfo = editor.GetIntermState(part, pos);
@@ -225,11 +213,11 @@ internal static class Parts{
 		QApi.AddPartTypeToPanel(Volatility, PartTypes.triplexBonder);
 		QApi.AddPartTypeToPanel(Tranquility, PartTypes.triplexBonder);
 		QApi.AddPartTypeToPanel(Sublimation, PartTypes.triplexBonder);
-		
-		QApi.AddPuzzlePermission("UnstableElements:irradiation", "Glyph of Irradiation", "Unstable Elements");
-		QApi.AddPuzzlePermission("UnstableElements:volatility", "Glyph of Volatility", "Unstable Elements");
-		QApi.AddPuzzlePermission("UnstableElements:tranquility", "Glyph of Tranquility", "Unstable Elements");
-		QApi.AddPuzzlePermission("UnstableElements:sublimation", "Glyph of Sublimation", "Unstable Elements");
+
+        UnstableElements.Instance.AddPuzzlePermission("irradiation");
+        UnstableElements.Instance.AddPuzzlePermission("volatility");
+        UnstableElements.Instance.AddPuzzlePermission("tranquility");
+        UnstableElements.Instance.AddPuzzlePermission("sublimation");
 
 		QApi.RunAfterCycle((sim, _) => {
 			// first thing

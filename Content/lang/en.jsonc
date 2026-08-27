@@ -1,0 +1,41 @@
+{
+  "unstable_elements": {
+    "": "Unstable Elements",
+    "description": "Introduces the unstable elements Aether and Uranium, and the glyphs that act on them.",
+    "atoms": {
+      "aether": {
+        "": "Aether",
+        "elemental": "Elemental Aether"
+      },
+      "uranium": {
+        "": "Uranium",
+        "elemental": "Elemental Uranium"
+      }
+    },
+    "parts": {
+      "irradiation": {
+        "": "Glyph of Irradiation",
+        "description": "The glyph of irradiation projects an atom of gold into an unstable atom of uranium."
+      },
+      "volatility": {
+        "": "Glyph of Volatility",
+        "description": "The glyph of volatility causes an atom of uranium to instantly decay, regardless of its heat."
+      },
+      "tranquility": {
+        "": "Glyph of Tranquility",
+        "description": "The glyph of tranquility projects a field that stabilizes uranium and aether atoms, preventing their decays."
+      },
+      "sublimation": {
+        "": "Glyph of Sublimation",
+        "description": "The glyph of sublimation splits an atom of quintessence into two molecules of stabilized aether."
+      }
+    },
+    "permission_sections": "Unstable Elements",
+    "permissions": {
+      "irradiation": "Glyph of Irradiation",
+      "volatility": "Glyph of Volatility",
+      "tranquility": "Glyph of Tranquility",
+      "sublimation": "Glyph of Sublimation"
+    }
+  }
+}

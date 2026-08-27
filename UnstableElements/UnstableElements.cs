@@ -8,23 +8,18 @@ public class UnstableElements : QuintessentialMod {
 	public static UnstableElements Instance { get; }
 
 
-    public override void Load(){
-		
-	}
+    public override void Load() { }
 
-	public override void PostLoad(){
-		
-	}
+    public override void LoadContent() {
+        Atoms.AddAtomTypes();
+        Parts.AddPartTypes();
+        Solitaire.Load();
+        // not sure about `static` load ordering so i'll leave this here
+        typeof(UeApi).ModInterop();
+    }
+    public override void LoadCompatContent() { }
+    public override void FinaliseContent() { }
 
-	public override void Unload(){
-
-	}
-
-	public override void LoadPuzzleContent(){
-		Atoms.AddAtomTypes();
-		Parts.AddPartTypes();
-		Solitaire.Load();
-		// not sure about `static` load ordering so i'll leave this here
-		typeof(UeApi).ModInterop();
-	}
+    public override void PostLoad() { }
+	public override void Unload() { }
 }

@@ -13,14 +13,14 @@ public class patch_JournalScreen : JournalScreen {
             Texture tick = true /* TODO: count wins */ ? Assets.textures.puzzle_select.list_checked : Assets.textures.puzzle_select.list_unchecked;
             Texture divider = isLarge ? Assets.textures.journal.divider_large : Assets.textures.journal.divider_small;
             Bounds2 bounds = Bounds2.WithSize(pos, puzzleBg.size.ToVector2());
-            bool hover = bounds.Contains(Input.MousePos());
+            bool hover = bounds.Contains(InputManager.MousePos());
             TextureRenderer.RenderText("Shattered Garden", pos + new Vector2(9, -19), Assets.fonts.crimson_15, class_181.field_1718, 0, 1f, 0.6f, float.MaxValue, float.MaxValue, 0, new Color(), null, int.MaxValue, false, true);
             UI.DrawTexture(tick, pos + new Vector2(puzzleBg.size.X - 27, -23f));
             UI.DrawTexture(puzzleBg, pos);
             UI.DrawTexture(divider, pos + new Vector2(7f, -34f));
             UI.DrawTexture(hover ? Solitaire.sigmarHoverSprite : Solitaire.sigmarSprite, bounds.Min + new Vector2(13f, 13f));
-            if (hover && Input.IsLeftClickPressed()) {
-                var solitaireScreen = new SolitaireScreen((SolitaireType)1);
+            if (hover && InputManager.IsClickPressed(MouseButtonType.LeftClick)) {
+                var solitaireScreen = new SolitaireScreen(SolitaireType.Quintessence);
                 solitaireScreen.SetUe(true);
                 UI.OpenScreen(solitaireScreen);
                 Assets.sounds.click_button.method_28(1f);
