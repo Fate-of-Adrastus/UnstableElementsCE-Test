@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnstableElements;
-using static Quintessential.Serialization.PuzzleModel;
 
 public class patch_Sim : Sim {
 

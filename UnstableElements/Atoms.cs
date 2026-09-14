@@ -102,7 +102,7 @@ internal static class Atoms{
 						for(var idx = 0; idx < UraniumIsotopes.Count; idx++)
 							if(atom.Value.atomType.QuintAtomType == UraniumIsotopes[idx].QuintAtomType){
 								if(idx == UraniumIsotopes.Count - 1)
-									DoUraniumDecay(molecule, atom.Value, atom.Key, seb);
+									DoDecay(molecule, atom.Value, atom.Key, seb, AtomTypes.lead);
 								else if(idx > 0 || grabbed)
 									atom.Value.atomType = UraniumIsotopes[idx + 1];
 								break;
@@ -111,9 +111,9 @@ internal static class Atoms{
 		});
 	}
 
-	public static void DoUraniumDecay(Molecule m, Atom u, HexIndex pos, SolutionEditorBase seb){
+	public static void DoDecay(Molecule m, Atom u, HexIndex pos, SolutionEditorBase seb, AtomType result){
 		AtomType from = u.atomType;
-		m.ReplaceAtom(AtomTypes.lead, pos);
+		m.ReplaceAtom(result, pos);
 		u.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, from, Assets.textures.atoms.projection_effect, 30f);
 	}
 

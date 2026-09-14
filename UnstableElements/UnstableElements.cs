@@ -3,7 +3,7 @@ using Quintessential;
 
 namespace UnstableElements;
 
-public class UnstableElements : QuintessentialMod {
+internal class UnstableElements : QuintessentialMod {
     public override string ModId => "unstable_elements";
 	public static UnstableElements Instance { get; }
 
