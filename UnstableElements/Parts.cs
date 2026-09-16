@@ -188,7 +188,7 @@ internal static class Parts{
                 progress = editor.GetCycleTime();
             }
 
-            if (progress < 0.5 && molecules != null) { // render under irises
+            if (0 < progress && progress < 0.5 && molecules != null) { // render under irises
 				Editor.RenderMolecule(molecules[0], renderInfo.pos, part.GetHexPos(), 0, 1f, progress, 1f, false, null);
                 Editor.RenderMolecule(molecules[1], renderInfo.pos, part.GetHexPos(), 0, 1f, progress, 1f, false, null);
             }
@@ -219,14 +219,14 @@ internal static class Parts{
 		UnstableElements.Instance.AddPuzzlePermission("tranquility");
 		UnstableElements.Instance.AddPuzzlePermission("sublimation");
 
-		QApi.RunAfterCycle((sim, _) => {
-			// first thing
-			TranquilityHexes.Clear();
+		QApi.AddCycleEvent(new(CycleEvent.CycleEventExecutionType.BeforeEarlyGlyphs | CycleEvent.CycleEventExecutionType.BeforeLateGlyphs, static (sim, type) => {
+            // first thing
+            TranquilityHexes.Clear();
 
-			OtherStableHexes.Clear();
-			foreach (var cb in OtherStableHexesCallbacks)
-				OtherStableHexes.UnionWith(cb(sim));
-		});
+            OtherStableHexes.Clear();
+            foreach (var cb in OtherStableHexesCallbacks)
+                OtherStableHexes.UnionWith(cb(sim));
+        }));
 
 		UnstableElements.Instance.AddRecipe(new(static (sim, part) => {
 			Debugger.Break();
@@ -247,7 +247,7 @@ internal static class Parts{
             return true;
 		}), Irradiation.Id, Irradiation.Id);
 
-        QApi.BindGlyphCylce(Irradiation, new(PartCycleDelegate.CycleExecutionType.Normal, static (sim, part, simState, recipe, isCycleStart) => {
+        QApi.BindGlyphCylce(Irradiation, new(PartCycleDelegate.PartCycleExecutionType.Normal, static (sim, part, simState, recipe, isCycleStart) => {
             // look for 3 unheld QSs and free gold
             // if all the atoms exist...
             if (recipe.Predicate.InvokeAndClear(sim, part)) {
@@ -285,7 +285,7 @@ internal static class Parts{
             return true;
 		}), Volatility.Id, Volatility.Id);
 		
-        QApi.BindGlyphCylce(Volatility, new(PartCycleDelegate.CycleExecutionType.Normal, (sim, part, simState, recipe, isCycleStart) => {
+        QApi.BindGlyphCylce(Volatility, new(PartCycleDelegate.PartCycleExecutionType.Normal, (sim, part, simState, recipe, isCycleStart) => {
             if (recipe.Predicate.InvokeAndClear(sim, part)){
 				AtomReference toDecay = sim.RecipeInputs[new(0, 0)] as AtomReference;
                 Atoms.DoDecay(toDecay.molecule, toDecay.atom, toDecay.pos, sim.solutionEditor, sim.RecipeOutputs[new(0, 0)] as AtomType);
@@ -296,7 +296,7 @@ internal static class Parts{
 
         UnstableElements.Instance.AddRecipe(new(), Tranquility.Id, Tranquility.Id);
 
-        QApi.BindGlyphCylce(Tranquility, new(PartCycleDelegate.CycleExecutionType.Normal, (sim, part, simState, recipe, isCycleStart) => {
+        QApi.BindGlyphCylce(Tranquility, new(PartCycleDelegate.PartCycleExecutionType.Normal, (sim, part, simState, recipe, isCycleStart) => {
             bool isPowered =
                         sim.FindAtomRelative(part, new(0, 1)).GetOrDefault(out AtomReference qs)
                         && qs.atomType == AtomTypes.quicksilver; // is QS, //  TODO maybe add a tag here
@@ -334,7 +334,7 @@ internal static class Parts{
             return true;
 		}), Sublimation.Id, Sublimation.Id);
 
-        QApi.BindGlyphCylce(Sublimation, new(PartCycleDelegate.CycleExecutionType.Normal, (sim, part, simState, recipe, isCycleStart) => {
+        QApi.BindGlyphCylce(Sublimation, new(PartCycleDelegate.PartCycleExecutionType.Normal, (sim, part, simState, recipe, isCycleStart) => {
             // if we're in the accepting phase...
             if (!simState.isProcessing) {
                 // if we have an unheld & unbonded quintessence at the centre...
