@@ -135,7 +135,7 @@ internal static class Atoms{
     //	}
     //}
 
-    public static bool IsHexStabilized(HexIndex h) => Parts.TranquilityHexes.Contains(h) || Parts.OtherStableHexes.Contains(h);
+    public static bool IsHexStabilized(HexIndex h) => TranquilityGlyph.TranquilityHexes.Contains(h) || UeApi.OtherStableHexes.Contains(h);
 
 
     // TODO: fix properly in quintessential

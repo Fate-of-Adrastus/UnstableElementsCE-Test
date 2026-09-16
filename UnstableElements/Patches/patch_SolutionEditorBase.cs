@@ -18,13 +18,13 @@ public abstract class patch_SolutionEditorBase : SolutionEditorBase {
             if (this is SimpleSolutionEditor)
                 pulse = 0.25f; // constant brightness in GIFs
 
-            Color tint = Parts.TranquilityZoneColor;
+            Color tint = TranquilityGlyph.TranquilityZoneColor;
             HexGrid conv = HexGrid.standardGrid;
             tint.A *= pulse;
-            foreach (var hex in Parts.TranquilityHexes) {
+            foreach (var hex in TranquilityGlyph.TranquilityHexes) {
                 Vector2 hexAsVec = conv.ToPixelCoords(hex) + param_5533 - new Vector2(2, 8);
-                Matrix4 tf = Matrix4.GetTranslation(hexAsVec.ToVector3(0)) * Matrix4.RotXY(0) * Matrix4.GetTranslation(new Vector3(-40, -40, 0)) * Matrix4.GetScale(Parts.TranquilityZoneHex.size.ToVector3(0));
-                TextureRenderer.Render(Parts.TranquilityZoneHex, tint, tf);
+                Matrix4 tf = Matrix4.GetTranslation(hexAsVec.ToVector3(0)) * Matrix4.RotXY(0) * Matrix4.GetTranslation(new Vector3(-40, -40, 0)) * Matrix4.GetScale(TranquilityGlyph.TranquilityZoneHex.size.ToVector3(0));
+                TextureRenderer.Render(TranquilityGlyph.TranquilityZoneHex, tint, tf);
             }
         }
     }
