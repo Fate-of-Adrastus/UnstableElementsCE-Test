@@ -10,8 +10,6 @@ internal static class Atoms{
 	public static AtomType Aether, Uranium;
 
     public static readonly List<AtomType> UraniumIsotopes = new(), SlowShakingIso = new(), FastShakingIso = new();
-
-    public static readonly AtomTypeEq AtomComparator = new();
     public static readonly Random UraniumShakeCounter = new(85934);
 
 	public static void AddAtomTypes(){
@@ -45,7 +43,7 @@ internal static class Atoms{
 				if(phase == 0 && turn == 0){
                     Uranium = isotope;
 				} else {
-					isotope.QuintAtomType = UnstableElements.Instance.GetIdentifier($"uranium_{phase}_{turn}");
+					isotope.Id = UnstableElements.Instance.GetIdentifier($"uranium_{phase}_{turn}");
 					isotope.name = Translations.Translate("unstable_elements.atoms.uranium");
 					isotope.elementalName = Translations.Translate("unstable_elements.atoms.uranium.elemental");
 					isotope.defaultName = Translations.Translate("unstable_elements.atoms.uranium").locDictionary[Language.English];
@@ -100,7 +98,7 @@ internal static class Atoms{
 				foreach(KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
 					if(!IsHexStabilized(atom.Key))
 						for(var idx = 0; idx < UraniumIsotopes.Count; idx++)
-							if(atom.Value.atomType.QuintAtomType == UraniumIsotopes[idx].QuintAtomType){
+							if(atom.Value.atomType.Id == UraniumIsotopes[idx].Id){
 								if(idx == UraniumIsotopes.Count - 1)
 									DoDecay(molecule, atom.Value, atom.Key, seb, AtomTypes.lead);
 								else if(idx > 0 || grabbed)
@@ -117,7 +115,7 @@ internal static class Atoms{
 		u.transmutationEffect = new TransmutationEffect(seb, (TransmutationEffectRenderMode)1, from, Assets.textures.atoms.projection_effect, 30f);
 	}
 
-	public static bool IsUraniumState(AtomType type) => UraniumIsotopes.Contains(type, AtomComparator);
+	public static bool IsUraniumState(AtomType type) => UraniumIsotopes.Contains(type);
 
     //private static void OnMoleculeEditorRender(On.MoleculeEditorScreen.orig_RenderFrame orig, MoleculeEditorScreen self, float deltaTime) {
     //	orig(self, deltaTime);
@@ -136,16 +134,4 @@ internal static class Atoms{
     //}
 
     public static bool IsHexStabilized(HexIndex h) => TranquilityGlyph.TranquilityHexes.Contains(h) || UeApi.OtherStableHexes.Contains(h);
-
-
-    // TODO: fix properly in quintessential
-    public class AtomTypeEq : IEqualityComparer<AtomType>{
-		public bool Equals(AtomType x, AtomType y){
-			return x.QuintAtomType == y.QuintAtomType;
-		}
-
-		public int GetHashCode(AtomType obj){
-			return obj.QuintAtomType.GetHashCode();
-		}
-	}
 }
