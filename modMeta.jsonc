@@ -1,15 +1,15 @@
 {
   "mod_id": "unstable_elements",
-  "version": "0.3.0.1",
+  "version": "0.3.2",
   "mod_page_url": "https://github.com/l-Luna/UnstableElements",
   "dll": "UnstableElements.dll",
   "authors": [],
   "icon": "textures/icons/UnstableElements",
   "mappings": "",
   "dependencies": {
-    "quintessential_core": "[0.6.2,0.7)",
-    "quintessential_data": "[0.6.2,0.7)",
-    "quintessential_ui": "[0.6.2,0.7)"
+    "quintessential_core": "[0.7.0,0.8)",
+    "quintessential_data": "[0.7.0,0.8)",
+    "quintessential_ui": "[0.7.0,0.8)"
   },
   "conflicts": []
 }

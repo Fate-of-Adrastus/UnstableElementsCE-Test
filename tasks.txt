@@ -1,0 +1,20 @@
+# Default runtime tasks for Mutatum
+
+Tasks:
+* strings --onlyOnChange
+* intermediary --onlyOnChange
+* newMod -name "UnstableElements"
+* copy -toMod "UnstableElements" -from "D:\C#_projects\UnstableElements\modMeta.jsonc"
+* copy -toMod "UnstableElements" -from "D:\C#_projects\UnstableElements\UnstableElements\bin\Debug\net10.0\UnstableElements.dll"
+* copy -toMod "UnstableElements" -from "D:\C#_projects\UnstableElements\UnstableElements\bin\Debug\net10.0\UnstableElements.xml"
+* copy -toMod "UnstableElements" -from "D:\C#_projects\UnstableElements\Content"
+* devMerge --onlyOnChange -id "unstable_elements" --mergeXML
+* merge ---onlyOnChange --asNamed
+* export -name "UnstableElements" -outputPath "D:\C#_projects\UnstableElements\UnstableElements\bin"
+* run -args "-devEnv -pseudoLang" --attachDebugger --readLogs
+
+AutoExit:
+  false
+
+# CopyTasksPath:
+# D:\C#_projects\UnstableElements
