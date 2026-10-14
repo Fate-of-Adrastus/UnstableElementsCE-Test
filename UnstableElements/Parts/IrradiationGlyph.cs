@@ -60,7 +60,7 @@ internal static class IrradiationGlyph {
             Texture[] glowFrames = Assets.textures.parts.projection_glyph_flash;
             GlyphEffect glowEffect = new(sim.solutionEditor, (EffectTimescaleType)1, posAsVec, glowFrames, 30f, Vector2.Zero, 0);
             sim.solutionEditor.glyphEffects.Add(glowEffect);
-            Assets.sounds.glyph_projection.method_28(sim.solutionEditor.method_506());
+            Assets.sounds.glyph_projection.PlaySound(sim.solutionEditor.method_506());
             return true;
         }
         return false;

@@ -70,7 +70,7 @@ internal static class SublimationGlyph {
                 // set this part to be inactive the rest of the cycle
                 simState.isProcessing = true;
                 // play the production sound
-                Assets.sounds.glyph_dispersion.method_28(sim.solutionEditor.method_506());
+                Assets.sounds.glyph_dispersion.PlaySound(sim.solutionEditor.method_506());
                 // mark output positions as collidable
                 HexIndex[] outputs = {
                                     new(0, 1),
@@ -120,12 +120,12 @@ internal static class SublimationGlyph {
         Molecule stabilizedAether = new();
         stabilizedAether.AddAtom(new Atom(Atoms.Aether), part.InFrontBy(new HexIndex(1, 1)));
         stabilizedAether.AddAtom(new Atom(AtomTypes.salt), part.InFrontBy(new HexIndex(0, 1)));
-        stabilizedAether.AddBond(BondTypeEnum.Standard, part.InFrontBy(new HexIndex(0, 1)), part.InFrontBy(new HexIndex(1, 1)), MaybeHelper.empty);
+        stabilizedAether.AddBond(BondTypes.GetBondType("om:standard"), part.InFrontBy(new HexIndex(0, 1)), part.InFrontBy(new HexIndex(1, 1)), MaybeHelper.empty);
         sim.RecipeOutputs[new(1, 1)] = stabilizedAether;
         Molecule stbAetherRot = new();
         stbAetherRot.AddAtom(new Atom(Atoms.Aether), part.InFrontBy(new HexIndex(-1, -1)));
         stbAetherRot.AddAtom(new Atom(AtomTypes.salt), part.InFrontBy(new HexIndex(0, -1)));
-        stbAetherRot.AddBond(BondTypeEnum.Standard, part.InFrontBy(new HexIndex(0, -1)), part.InFrontBy(new HexIndex(-1, -1)), MaybeHelper.empty);
+        stbAetherRot.AddBond(BondTypes.GetBondType("om:standard"), part.InFrontBy(new HexIndex(0, -1)), part.InFrontBy(new HexIndex(-1, -1)), MaybeHelper.empty);
         sim.RecipeOutputs[new(-1, -1)] = stbAetherRot;
 
         return true;

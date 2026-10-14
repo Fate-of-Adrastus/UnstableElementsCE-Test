@@ -57,56 +57,47 @@ internal static class Atoms{
 
         UnstableElements.Instance.AddAtomType(Uranium, "uranium");
 
-		// Aether self-destruction
 		QApi.RunAfterCycle((sim, first) => {
-			if(!first){
-				List<Molecule> toRemove = new();
-				var molecules = sim.molecules;
-				foreach(var molecule in molecules){
-					bool hasAether = false, hasNonAether = false;
-					foreach(KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
-						if(atom.Value.atomType.Equals(Aether)){
-							if(!IsHexStabilized(atom.Key))
-								hasAether = true;
-						}else
-							hasNonAether = true;
+            if (first) return;
 
-					if(hasAether && !hasNonAether)
-						toRemove.Add(molecule);
-				}
+            List<Molecule> toRemove = new();
+            var molecules = sim.molecules;
+            var seb = sim.solutionEditor;
+            foreach (var molecule in molecules) {
+                // Uranium heating
+                // atoms of initial uranium only decay if the molecule containing them is grabbed
+                bool grabbed = sim.simulationDict.Values.Any(state => state.heldMolecule == molecule);
+                foreach (KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
+                    if (!IsHexStabilized(atom.Key))
+                        for (var idx = 0; idx < UraniumIsotopes.Count; idx++)
+                            if (atom.Value.atomType.Id == UraniumIsotopes[idx].Id) {
+                                if (idx == UraniumIsotopes.Count - 1)
+                                    DoDecay(molecule, atom.Value, atom.Key, seb, AtomTypes.lead);
+                                else if (idx > 0 || grabbed)
+                                    atom.Value.atomType = UraniumIsotopes[idx + 1];
+                                break;
+                            }
 
-				foreach(var it in toRemove){
-					foreach(KeyValuePair<HexIndex, Atom> atom in it.GetAtoms()){
-						var seb = sim.solutionEditor;
-						seb.field_3936.Add(new GlyphEffect(seb, (EffectTimescaleType)1, HexGrid.standardGrid.ToPixelCoords(atom.Key) + new Vector2(80f, 0.0f), Assets.textures.parts.disposal_flash /* or 42? */, 30f, Vector2.Zero, 0.0f));
-					}
+                // Aether self-destruction
+                bool hasAether = false, hasNonAether = false;
+                foreach (KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
+                    if (atom.Value.atomType.Equals(Aether)) {
+                        if (!IsHexStabilized(atom.Key))
+                            hasAether = true;
+                    } else
+                        hasNonAether = true;
 
-					molecules.Remove(it);
-				}
-			}
-		});
+                if (hasAether && !hasNonAether)
+                    toRemove.Add(molecule);
+            }
 
-		// Uranium heating
-		QApi.RunAfterCycle((sim, first) => {
-			if(first) return;
-			
-			var seb = sim.solutionEditor;
-			var molecules = sim.molecules;
-			foreach(var molecule in molecules){
-				// atoms of initial uranium only decay if the molecule containing them is grabbed
-				bool grabbed = sim.simulationDict.Values.Any(state => state.heldMolecule == molecule);
-				foreach(KeyValuePair<HexIndex, Atom> atom in molecule.GetAtoms())
-					if(!IsHexStabilized(atom.Key))
-						for(var idx = 0; idx < UraniumIsotopes.Count; idx++)
-							if(atom.Value.atomType.Id == UraniumIsotopes[idx].Id){
-								if(idx == UraniumIsotopes.Count - 1)
-									DoDecay(molecule, atom.Value, atom.Key, seb, AtomTypes.lead);
-								else if(idx > 0 || grabbed)
-									atom.Value.atomType = UraniumIsotopes[idx + 1];
-								break;
-							}
-			}
-		});
+            foreach (var it in toRemove) {
+                foreach (KeyValuePair<HexIndex, Atom> atom in it.GetAtoms()) {
+                    seb.field_3936.Add(new GlyphEffect(seb, (EffectTimescaleType)1, HexGrid.standardGrid.ToPixelCoords(atom.Key) + new Vector2(80f, 0.0f), Assets.textures.parts.disposal_flash /* or 42? */, 30f, Vector2.Zero, 0.0f));
+                }
+                molecules.Remove(it);
+            }
+        });
 	}
 
 	public static void DoDecay(Molecule m, Atom u, HexIndex pos, SolutionEditorBase seb, AtomType result){
