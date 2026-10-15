@@ -12,7 +12,7 @@ public abstract class patch_SolutionEditorBase : SolutionEditorBase {
         orig_method_1984(param_5533, param_5534, param_5535, param_5536, param_5537, param_5538);
 
         if (this.GetSimPlayState() != SimPlayState.Stopped) {
-            double time = Math.Sin(new DeltaTime(Time.Now().Ticks).InSeconds());
+            double time = Math.Sin(Time.NowInSeconds());
             float pulse = (float)(time / 4 + .75) / 2.4f;
 
             if (this is SimpleSolutionEditor)

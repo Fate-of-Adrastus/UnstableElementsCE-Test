@@ -34,7 +34,7 @@ internal static class TranquilityGlyph {
         renderer.RenderRotating(TranquilityMetalBowl, qsSite, Vector2.Zero);
         renderer.RenderUpright(TranquilityQuicksilverSymbol, qsSite, Vector2.Zero);
 
-        double time = Math.Sin(new DeltaTime(Time.Now().Ticks).InSeconds());
+        double time = Math.Sin(Time.NowInSeconds());
         float pulse = (float)(time / 3 + .66);
         if (editor.GetSimPlayState() != SimPlayState.Stopped && new DynamicData(part).TryGet(TranquilityPowerId, out bool? power) && power == true) {
             Color tint = Color.White;
