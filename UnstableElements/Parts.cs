@@ -97,10 +97,10 @@ internal static class Parts {
 		UnstableElements.Instance.AddPuzzlePermission("tranquility");
 		UnstableElements.Instance.AddPuzzlePermission("sublimation");
 
-        QApi.BindGlyphCylce(Irradiation, new(PartCycleExecutionType.Normal, IrradiationGlyph.OnCycle));
-        QApi.BindGlyphCylce(Volatility, new(PartCycleExecutionType.Normal, VolatilityGlyph.OnCycle));
-        QApi.BindGlyphCylce(Tranquility, new(PartCycleExecutionType.Normal, TranquilityGlyph.OnCycle));
-        QApi.BindGlyphCylce(Sublimation, new(PartCycleExecutionType.Normal, SublimationGlyph.OnCycle));
+        QApi.BindGlyphCycle(Irradiation, new(PartCycleExecutionType.Normal, IrradiationGlyph.OnCycle));
+        QApi.BindGlyphCycle(Volatility, new(PartCycleExecutionType.Normal, VolatilityGlyph.OnCycle));
+        QApi.BindGlyphCycle(Tranquility, new(PartCycleExecutionType.Normal, TranquilityGlyph.OnCycle));
+        QApi.BindGlyphCycle(Sublimation, new(PartCycleExecutionType.Normal, SublimationGlyph.OnCycle));
 
         UnstableElements.Instance.AddRecipe(new(IrradiationGlyph.BasicIrradiation), Irradiation.Id, Irradiation.Id);
         UnstableElements.Instance.AddRecipe(new(VolatilityGlyph.BasicVolatility), Volatility.Id, Volatility.Id);
@@ -111,32 +111,5 @@ internal static class Parts {
 			CycleEvent.CycleEventExecutionType.BeforeEarlyGlyphs | CycleEvent.CycleEventExecutionType.BeforeLateGlyphs,
 			TranquilityGlyph.ClearTranquility
 		));
-
-
-
-		// Dumb test recipe with uranium
-		//UnstableElements.Instance.AddRecipe(new(static (sim, part) => {
-		//	if (!sim.GetAtomReference(part, new(0, 0), false, out AtomReference quint) ||
-		//		quint.inMultiAtomMolecule || quint.isHeldByArm ||
-		//		!Atoms.IsUraniumState(quint.atomType) ||
-		//		sim.HasAtomAt(part, new(0, 1), true) ||
-		//		sim.HasAtomAt(part, new(1, 1), true) ||
-		//		sim.HasAtomAt(part, new(0, -1), true) ||
-		//		sim.HasAtomAt(part, new(-1, -1), true)) return false;
-
-		//	sim.RecipeInputs[new(0, 0)] = quint;
-		//	Molecule stabilizedAether = new();
-		//	stabilizedAether.AddAtom(new Atom(AtomTypes.lead), part.InFrontBy(new HexIndex(1, 1)));
-		//	stabilizedAether.AddAtom(new Atom(AtomTypes.quicksilver), part.InFrontBy(new HexIndex(0, 1)));
-		//	stabilizedAether.AddBond(BondTypeEnum.Standard, part.InFrontBy(new HexIndex(0, 1)), part.InFrontBy(new HexIndex(1, 1)), MaybeHelper.empty);
-		//	sim.RecipeOutputs[new(1, 1)] = stabilizedAether;
-		//	Molecule stbAetherRot = new();
-		//	stbAetherRot.AddAtom(new Atom(AtomTypes.gold), part.InFrontBy(new HexIndex(-1, -1)));
-		//	stbAetherRot.AddAtom(new Atom(AtomTypes.quicksilver), part.InFrontBy(new HexIndex(0, -1)));
-		//	stbAetherRot.AddBond(BondTypeEnum.Standard, part.InFrontBy(new HexIndex(0, -1)), part.InFrontBy(new HexIndex(-1, -1)), MaybeHelper.empty);
-		//	sim.RecipeOutputs[new(-1, -1)] = stbAetherRot;
-
-		//	return true;
-		//}), Sublimation.Id + "_other", Sublimation.Id);
 	}
 }
